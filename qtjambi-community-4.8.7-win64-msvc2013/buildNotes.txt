@@ -1,0 +1,9 @@
+Build Specs (08/09/2015):
+    * Windows 7 SP1 x64
+    * Visual Studio Community 2013 with Update 5 x64
+    * JDK 1.8.0_60
+    * Qt 4.8.7 final -- http://download.qt.io/official_releases/qt/4.8/4.8.7/qt-everywhere-opensource-src-4.8.7.zip
+    * Qt Jambi Change-Id: Iab5b0bf2720c810658006619fafaa21be7975f8c -- http://gerrit.smar.fi/#/c/1303/
+
+Note: It is required to have Visual C++ Redistributable for Visual Studio 2013 x64 installed 
+        -> link: http://www.microsoft.com/en-us/download/details.aspx?id=40784
