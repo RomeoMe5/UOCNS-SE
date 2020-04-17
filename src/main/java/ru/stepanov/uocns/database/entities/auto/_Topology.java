@@ -15,18 +15,11 @@ public abstract class _Topology extends CayenneDataObject {
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<String> ARGS = Property.create("args", String.class);
     public static final Property<Integer> COLUMNS = Property.create("columns", Integer.class);
     public static final Property<String> DESCRIPTION = Property.create("description", String.class);
+    public static final Property<String> NAME = Property.create("name", String.class);
     public static final Property<Integer> NODES = Property.create("nodes", Integer.class);
     public static final Property<Integer> ROWS = Property.create("rows", Integer.class);
-
-    public void setArgs(String args) {
-        writeProperty("args", args);
-    }
-    public String getArgs() {
-        return (String)readProperty("args");
-    }
 
     public void setColumns(int columns) {
         writeProperty("columns", columns);
@@ -41,6 +34,13 @@ public abstract class _Topology extends CayenneDataObject {
     }
     public String getDescription() {
         return (String)readProperty("description");
+    }
+
+    public void setName(String name) {
+        writeProperty("name", name);
+    }
+    public String getName() {
+        return (String)readProperty("name");
     }
 
     public void setNodes(int nodes) {

@@ -10,4 +10,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MeshResponse {
+
+    private Long id;
+
+    private Long reportId;
+
+    private Long tableId;
+
+    private Long xmlId;
+
+    private String name;
+
+    private String description;
+
+    private String columns;
+
+    private String nodes;
+
+    private String rows;
 }

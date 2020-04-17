@@ -5,10 +5,10 @@
 	 project-version="9">
 	<property name="defaultPackage" value="ru.stepanov.uocns.database.entities"/>
 	<db-entity name="topology" schema="public">
-		<db-attribute name="args" type="VARCHAR" length="256"/>
 		<db-attribute name="columns" type="INTEGER"/>
 		<db-attribute name="description" type="VARCHAR" length="100000"/>
 		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="256"/>
 		<db-attribute name="nodes" type="INTEGER"/>
 		<db-attribute name="rows" type="INTEGER"/>
 	</db-entity>
@@ -32,9 +32,9 @@
 		<db-attribute name="name" type="VARCHAR" length="256"/>
 	</db-entity>
 	<obj-entity name="Topology" className="ru.stepanov.uocns.database.entities.Topology" dbEntityName="topology">
-		<obj-attribute name="args" type="java.lang.String" db-attribute-path="args"/>
 		<obj-attribute name="columns" type="int" db-attribute-path="columns"/>
 		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="nodes" type="int" db-attribute-path="nodes"/>
 		<obj-attribute name="rows" type="int" db-attribute-path="rows"/>
 	</obj-entity>

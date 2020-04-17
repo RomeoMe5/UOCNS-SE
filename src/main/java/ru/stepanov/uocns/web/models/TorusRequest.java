@@ -10,4 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TorusRequest {
+
+    private String name;
+
+    private String description;
+
+    private String columns;
+
+    private String nodes;
+
+    private String rows;
 }
