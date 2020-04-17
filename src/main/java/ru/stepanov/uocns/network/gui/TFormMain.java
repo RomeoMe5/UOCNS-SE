@@ -1,30 +1,26 @@
 package ru.stepanov.uocns.network.gui;
 
-import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QFileDialog;
 import com.trolltech.qt.gui.QMainWindow;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.stepanov.uocns.network.TCommandOCNS;
 import ru.stepanov.uocns.network.TControllerOCNS;
 import ru.stepanov.uocns.network.TNetworkManager;
-import ru.stepanov.uocns.network.common.generator.Circulant;
-import ru.stepanov.uocns.network.common.generator.Mesh;
-import ru.stepanov.uocns.network.common.generator.Torus;
+import ru.stepanov.uocns.network.common.generator.utils.XmlWriter;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
+@Service
 public class TFormMain extends QMainWindow {
-    private static /* synthetic */ int[] $SWITCH_TABLE$gui$TFormMain$TStateOCNS;
-    public static final String MESH_TOPOLOGY = "Mesh";
-    public static final String TORUS_TOPOLOGY = "Torus";
-    public static final String CIRCULANT_TOPOLOGY = "Circulant";
-    public static final String OPTIMAL_CIRCULANT_TOPOLOGY = "CirculantOpt";
-    public static final String RESULTS_PATH = "D:/UOCNS/"; //TODO: убрать хардкод
-    public boolean isCmd = false;
+
+    @Autowired
+    XmlWriter xmlWriter;
+
+    private static int[] $SWITCH_TABLE$gui$TFormMain$TStateOCNS;
     public String filepath;
     public String outputFilepath;
     public String outputTableFilepath;
@@ -47,23 +43,22 @@ public class TFormMain extends QMainWindow {
         this.fUIFormMain.fBtnExport.clicked.connect(this, "onBtnExportClick()");
     }
 
-    public static void main(String[] args) {
-        QApplication.initialize(args);
-        TFormMain fFormMain = new TFormMain();
-        if (args.length > 0) {
-            String descr = parseArgs(args);
-            fFormMain.filepath = RESULTS_PATH + descr + "/config-" + descr + ".xml";
-            fFormMain.outputFilepath = RESULTS_PATH + descr + "/result-" + descr
-                    + LocalTime.now().format(DateTimeFormatter.ofPattern("HH-mm-ss")) + ".html";
-            fFormMain.outputTableFilepath = RESULTS_PATH + descr + "/table-" + descr + ".txt";
-            fFormMain.show();
-            fFormMain.onBtnRunClick();
-        } else {
-            fFormMain.show();
-        }
-
-        QApplication.execStatic();
-    }
+//    public void main(String[] args) {
+//        QApplication.initialize(args);
+//        TFormMain fFormMain = new TFormMain();
+//        if (args.length > 0) {
+//            fFormMain.filepath = RESULTS_PATH + descr + "/config-" + descr + ".xml";
+//            fFormMain.outputFilepath = RESULTS_PATH + descr + "/result-" + descr
+//                    + LocalTime.now().format(DateTimeFormatter.ofPattern("HH-mm-ss")) + ".html";
+//            fFormMain.outputTableFilepath = RESULTS_PATH + descr + "/table-" + descr + ".txt";
+//            fFormMain.show();
+//            fFormMain.onBtnRunClick();
+//        } else {
+//            fFormMain.show();
+//        }
+//
+//        QApplication.execStatic();
+//    }
 
     static int[] $SWITCH_TABLE$gui$TFormMain$TStateOCNS() {
         int[] arrn;
@@ -224,99 +219,6 @@ public class TFormMain extends QMainWindow {
         Paused,
         Stoped,
         Finished;
-
-        //private TStateOCNS(String string2, int n2) {
-        //}
     }
-
-    public static String parseArgs(String[] args) {
-        String descr;
-        if (MESH_TOPOLOGY.equals(args[0])) {
-            int n, m;
-            n = Integer.parseInt(args[1]);
-            m = Integer.parseInt(args[2]);
-            Mesh meshNetwork;
-            if (n == m) {
-                meshNetwork = new Mesh(n, n);
-            } else {
-                meshNetwork = new Mesh(n, m);
-            }
-            meshNetwork.createNetlist();
-            meshNetwork.createRouting();
-            descr = MESH_TOPOLOGY + "-(" + n + ", " + m + ")";
-            createXml(meshNetwork.getNetlist(), meshNetwork.getRouting(), descr);
-
-        } else if (TORUS_TOPOLOGY.equals(args[0])) {
-            int n, m;
-            n = Integer.parseInt(args[1]);
-            m = Integer.parseInt(args[2]);
-            Torus torusNetwork;
-            if (n == m) {
-                torusNetwork = new Torus(n, n);
-            } else {
-                torusNetwork = new Torus(n, m);
-            }
-            torusNetwork.createNetlist();
-            torusNetwork.createRouting();
-            descr = TORUS_TOPOLOGY + "-(" + n + ", " + m + ")";
-            createXml(torusNetwork.getNetlist(), torusNetwork.getRouting(), descr);
-        } else if (OPTIMAL_CIRCULANT_TOPOLOGY.equals(args[0])) {
-            int k = Integer.parseInt(args[1]);
-
-            if (k < 5) {
-                System.out.println("Unexpected topology type!\nPlease check input args");
-                return null;
-            } else {
-                Circulant circulantNetwork = new Circulant(k);
-                circulantNetwork.createNetlist();
-                circulantNetwork.createRouting(circulantNetwork.adjacencyMatrix(circulantNetwork.getNetlist(), k),
-                        circulantNetwork.getNetlist());
-                descr = OPTIMAL_CIRCULANT_TOPOLOGY + "-(" + k + ", " + circulantNetwork.s1 + ", " + circulantNetwork.s2 + ")";
-                createXml(circulantNetwork.getNetlist(), circulantNetwork.getRouting(), descr);
-            }
-
-        } else if (CIRCULANT_TOPOLOGY.equals(args[0])) {
-            int k = Integer.parseInt(args[1]);
-            int s1 = Integer.parseInt(args[2]);
-            int s2 = Integer.parseInt(args[3]);
-            if (k < 5) {
-                System.out.println("Unexpected topology type!\nPlease check input args");
-                return null;
-            } else {
-                Circulant circulantNetwork = new Circulant(k, s1, s2);
-                circulantNetwork.createNetlist();
-                circulantNetwork.createRouting(circulantNetwork.adjacencyMatrix(circulantNetwork.getNetlist(), k),
-                        circulantNetwork.getNetlist());
-                descr = CIRCULANT_TOPOLOGY + "-(" + k + ", " + s1 + ", " + s2 + ")";
-                createXml(circulantNetwork.getNetlist(), circulantNetwork.getRouting(), descr);
-            }
-        } else {
-            System.out.println("Unexpected topology type!");
-            return null;
-        }
-        return descr;
-    }
-
-    public static void createXml(int[][] netlist, int[][] routing, String descr) {
-        StringBuilder netlistData = new StringBuilder("\n");
-        for (int i = 0; i < routing.length; i++) {
-            for (int j = 0; j < 4; j++) {
-                netlistData.append(netlist[i][j]).append(" ");
-            }
-            netlistData.append("\n");
-        }
-
-        StringBuilder routingData = new StringBuilder("\n");
-        for (int[] ints : routing) {
-            for (int j = 0; j < routing.length; j++) {
-                routingData.append(ints[j]).append(" ");
-            }
-            routingData.append("\n");
-        }
-        //TODO:
-//        XmlWriter xmlDoc = new XmlWriter(netlistData.toString(), routingData.toString(), descr);
-    }
-
-
 }
 

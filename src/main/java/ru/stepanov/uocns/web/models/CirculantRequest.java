@@ -15,9 +15,13 @@ public class CirculantRequest {
 
     private String description;
 
-    private String columns;
+    private Integer columns;
 
-    private String nodes;
+    private Integer nodes;
 
-    private String rows;
+    private Integer rows;
+
+    private Integer firstStep;
+
+    private Integer secondStep;
 }

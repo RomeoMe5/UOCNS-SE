@@ -15,9 +15,9 @@ public class TorusRequest {
 
     private String description;
 
-    private String columns;
+    private Integer columns;
 
-    private String nodes;
+    private Integer nodes;
 
-    private String rows;
+    private Integer rows;
 }

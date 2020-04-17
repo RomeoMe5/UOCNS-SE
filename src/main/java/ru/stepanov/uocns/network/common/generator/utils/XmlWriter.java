@@ -23,7 +23,7 @@ public class XmlWriter {
     @Value("${generator.results.path}")
     String RESULTS_PATH;
 
-    public boolean xmlWriter(String netlistData, String routingData, String descr) throws InternalErrorException {
+    public boolean write(String netlistData, String routingData, String descr) throws InternalErrorException {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
