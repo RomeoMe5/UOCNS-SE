@@ -1,4 +1,4 @@
-CREATE TABLE public.topology_table
+CREATE TABLE IF NOT EXISTS public.topology_table
 (
     id          bigint          NOT NULL,
     id_topology bigint          NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE public.topology_table
     PRIMARY KEY (id)
 );
 
-CREATE TABLE public.topology_report
+CREATE TABLE IF NOT EXISTS public.topology_report
 (
     id          bigint          NOT NULL,
     id_topology bigint          NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE public.topology_report
     PRIMARY KEY (id)
 );
 
-CREATE TABLE public.topology_xml
+CREATE TABLE IF NOT EXISTS public.topology_xml
 (
     id          bigint          NOT NULL,
     id_topology bigint          NULL,
@@ -26,7 +26,7 @@ CREATE TABLE public.topology_xml
     PRIMARY KEY (id)
 );
 
-CREATE TABLE public.topology
+CREATE TABLE IF NOT EXISTS public.topology
 (
     id          bigint          NOT NULL,
     args        varchar(256)    NULL,
@@ -37,11 +37,11 @@ CREATE TABLE public.topology
     PRIMARY KEY (id)
 );
 
-CREATE SEQUENCE public.pk_topology INCREMENT 1 START 0;
+CREATE SEQUENCE IF NOT EXISTS public.pk_topology INCREMENT 1 START 1;
 
-CREATE SEQUENCE public.pk_topology_report INCREMENT 1 START 0;
+CREATE SEQUENCE IF NOT EXISTS public.pk_topology_report INCREMENT 1 START 1;
 
-CREATE SEQUENCE public.pk_topology_table INCREMENT 1 START 0;
+CREATE SEQUENCE IF NOT EXISTS public.pk_topology_table INCREMENT 1 START 1;
 
-CREATE SEQUENCE public.pk_topology_xml INCREMENT 1 START 0;
+CREATE SEQUENCE IF NOT EXISTS public.pk_topology_xml INCREMENT 1 START 1;
 
