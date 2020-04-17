@@ -9,7 +9,6 @@ import ru.stepanov.uocns.network.TNetworkManager;
 import ru.stepanov.uocns.network.common.generator.Circulant;
 import ru.stepanov.uocns.network.common.generator.Mesh;
 import ru.stepanov.uocns.network.common.generator.Torus;
-import ru.stepanov.uocns.network.common.generator.utils.XmlWriter;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -53,8 +52,8 @@ public class TFormMain extends QMainWindow {
         TFormMain fFormMain = new TFormMain();
         if (args.length > 0) {
             String descr = parseArgs(args);
-            fFormMain.filepath = RESULTS_PATH + descr + "/config-" + descr + "__2____" + ".xml";
-            fFormMain.outputFilepath = RESULTS_PATH + descr + "/result-" + descr + "__2____"
+            fFormMain.filepath = RESULTS_PATH + descr + "/config-" + descr + ".xml";
+            fFormMain.outputFilepath = RESULTS_PATH + descr + "/result-" + descr
                     + LocalTime.now().format(DateTimeFormatter.ofPattern("HH-mm-ss")) + ".html";
             fFormMain.outputTableFilepath = RESULTS_PATH + descr + "/table-" + descr + ".txt";
             fFormMain.show();

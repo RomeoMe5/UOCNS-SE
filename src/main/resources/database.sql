@@ -1,1 +1,47 @@
---some ddl
+CREATE TABLE public.topology_table
+(
+    id          bigint          NOT NULL,
+    id_topology bigint          NOT NULL,
+    name        varchar(256)    NULL,
+    content     varchar(100000) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE public.topology_report
+(
+    id          bigint          NOT NULL,
+    id_topology bigint          NOT NULL,
+    name        varchar(256)    NULL,
+    content     varchar(100000) NOT NULL,
+    path        varchar(100000) NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE public.topology_xml
+(
+    id          bigint          NOT NULL,
+    id_topology bigint          NULL,
+    name        varchar(256)    NULL,
+    content     varchar(100000) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE public.topology
+(
+    id          bigint          NOT NULL,
+    args        varchar(256)    NULL,
+    description varchar(100000) NULL,
+    columns     integer         NULL,
+    nodes       integer         NULL,
+    rows        integer         NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE public.pk_topology INCREMENT 1 START 0;
+
+CREATE SEQUENCE public.pk_topology_report INCREMENT 1 START 0;
+
+CREATE SEQUENCE public.pk_topology_table INCREMENT 1 START 0;
+
+CREATE SEQUENCE public.pk_topology_xml INCREMENT 1 START 0;
+

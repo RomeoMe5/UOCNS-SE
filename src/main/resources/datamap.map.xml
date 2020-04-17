@@ -4,4 +4,54 @@
 	 xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap https://cayenne.apache.org/schema/9/modelMap.xsd"
 	 project-version="9">
 	<property name="defaultPackage" value="ru.stepanov.uocns.database.entities"/>
+	<db-entity name="topology" schema="public">
+		<db-attribute name="args" type="VARCHAR" length="256"/>
+		<db-attribute name="columns" type="INTEGER"/>
+		<db-attribute name="description" type="VARCHAR" length="100000"/>
+		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="nodes" type="INTEGER"/>
+		<db-attribute name="rows" type="INTEGER"/>
+	</db-entity>
+	<db-entity name="topology_report" schema="public">
+		<db-attribute name="content" type="VARCHAR" isMandatory="true" length="100000"/>
+		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="id_topology" type="BIGINT" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="256"/>
+		<db-attribute name="path" type="VARCHAR" length="100000"/>
+	</db-entity>
+	<db-entity name="topology_table" schema="public">
+		<db-attribute name="content" type="VARCHAR" isMandatory="true" length="100000"/>
+		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="id_topology" type="BIGINT" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="256"/>
+	</db-entity>
+	<db-entity name="topology_xml" schema="public">
+		<db-attribute name="content" type="VARCHAR" isMandatory="true" length="100000"/>
+		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="id_topology" type="BIGINT"/>
+		<db-attribute name="name" type="VARCHAR" length="256"/>
+	</db-entity>
+	<obj-entity name="Topology" className="ru.stepanov.uocns.database.entities.Topology" dbEntityName="topology">
+		<obj-attribute name="args" type="java.lang.String" db-attribute-path="args"/>
+		<obj-attribute name="columns" type="int" db-attribute-path="columns"/>
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="nodes" type="int" db-attribute-path="nodes"/>
+		<obj-attribute name="rows" type="int" db-attribute-path="rows"/>
+	</obj-entity>
+	<obj-entity name="TopologyReport" className="ru.stepanov.uocns.database.entities.TopologyReport" dbEntityName="topology_report">
+		<obj-attribute name="content" type="java.lang.String" db-attribute-path="content"/>
+		<obj-attribute name="idTopology" type="long" db-attribute-path="id_topology"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+		<obj-attribute name="path" type="java.lang.String" db-attribute-path="path"/>
+	</obj-entity>
+	<obj-entity name="TopologyTable" className="ru.stepanov.uocns.database.entities.TopologyTable" dbEntityName="topology_table">
+		<obj-attribute name="content" type="java.lang.String" db-attribute-path="content"/>
+		<obj-attribute name="idTopology" type="long" db-attribute-path="id_topology"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="TopologyXml" className="ru.stepanov.uocns.database.entities.TopologyXml" dbEntityName="topology_xml">
+		<obj-attribute name="content" type="java.lang.String" db-attribute-path="content"/>
+		<obj-attribute name="idTopology" type="long" db-attribute-path="id_topology"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
 </data-map>
