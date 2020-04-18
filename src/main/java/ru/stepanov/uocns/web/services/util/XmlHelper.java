@@ -63,7 +63,7 @@ public class XmlHelper {
     @Value("${generator.results.path}")
     String RESULTS_PATH;
 
-    public void write(String netlistData, String routingData, String description, Topology topology) throws InternalErrorException {
+    private void write(String netlistData, String routingData, String description, Topology topology) throws InternalErrorException {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
