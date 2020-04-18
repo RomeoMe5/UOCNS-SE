@@ -45,3 +45,9 @@ CREATE SEQUENCE IF NOT EXISTS public.pk_topology_table INCREMENT 1 START 1;
 
 CREATE SEQUENCE IF NOT EXISTS public.pk_topology_xml INCREMENT 1 START 1;
 
+ALTER TABLE public.topology_xml ADD FOREIGN KEY (id_topology) REFERENCES public.topology (id);
+
+ALTER TABLE public.topology_table ADD FOREIGN KEY (id_topology) REFERENCES public.topology (id);
+
+ALTER TABLE public.topology_report ADD FOREIGN KEY (id_topology) REFERENCES public.topology (id);
+
