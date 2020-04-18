@@ -41,23 +41,28 @@ public class XmlHelper {
     }
 
     public void createXml(int[][] netlist, int[][] routing, String description, Topology topology) throws InternalErrorException {
-        StringBuilder netlistData = new StringBuilder("\n");
-        for (int i = 0; i < routing.length; i++) {
-            for (int j = 0; j < 4; j++) {
-                netlistData.append(netlist[i][j]).append(" ");
+        try {
+            StringBuilder netlistData = new StringBuilder("\n");
+            for (int i = 0; i < routing.length; i++) {
+                for (int j = 0; j < 4; j++) {
+                    netlistData.append(netlist[i][j]).append(" ");
+                }
+                netlistData.append("\n");
             }
-            netlistData.append("\n");
-        }
 
-        StringBuilder routingData = new StringBuilder("\n");
-        for (int[] ints : routing) {
-            for (int j = 0; j < routing.length; j++) {
-                routingData.append(ints[j]).append(" ");
+            StringBuilder routingData = new StringBuilder("\n");
+            for (int[] ints : routing) {
+                for (int j = 0; j < routing.length; j++) {
+                    routingData.append(ints[j]).append(" ");
+                }
+                routingData.append("\n");
             }
-            routingData.append("\n");
-        }
 
-        write(netlistData.toString(), routingData.toString(), description, topology);
+            write(netlistData.toString(), routingData.toString(), description, topology);
+        } catch (Exception e){
+            log.error("Exception while creating XML: " + e.getMessage());
+            throw new InternalErrorException("Exception while creating XML: " + e.getMessage());
+        }
     }
 
     @Value("${generator.results.path}")
