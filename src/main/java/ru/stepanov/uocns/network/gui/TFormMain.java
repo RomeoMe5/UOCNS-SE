@@ -14,11 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Service
 public class TFormMain extends QMainWindow {
-
-    @Autowired
-    XmlWriter xmlWriter;
 
     private static int[] $SWITCH_TABLE$gui$TFormMain$TStateOCNS;
     public String filepath;

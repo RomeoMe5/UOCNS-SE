@@ -56,7 +56,7 @@ public class SimulatorService implements ISimulatorService {
             topology.setDescription(description);
             objectContext.commitChanges();
 
-            xmlHelper.createXml(circulantNetwork.getNetlist(), circulantNetwork.getRouting(), description);
+            xmlHelper.createXml(circulantNetwork.getNetlist(), circulantNetwork.getRouting(), description, topology);
         }
         return null;
     }
@@ -80,7 +80,7 @@ public class SimulatorService implements ISimulatorService {
             topology.setDescription(description);
             objectContext.commitChanges();
 
-            xmlHelper.createXml(circulantNetwork.getNetlist(), circulantNetwork.getRouting(), description);
+            xmlHelper.createXml(circulantNetwork.getNetlist(), circulantNetwork.getRouting(), description, topology);
         }
         return null;
     }
@@ -100,7 +100,7 @@ public class SimulatorService implements ISimulatorService {
         topology.setDescription(description);
         objectContext.commitChanges();
 
-        xmlHelper.createXml(meshNetwork.getNetlist(), meshNetwork.getRouting(), description);
+        xmlHelper.createXml(meshNetwork.getNetlist(), meshNetwork.getRouting(), description, topology);
 
         return null;
     }
@@ -120,7 +120,7 @@ public class SimulatorService implements ISimulatorService {
         topology.setDescription(description);
         objectContext.commitChanges();
 
-        xmlHelper.createXml(torusNetwork.getNetlist(), torusNetwork.getRouting(), description);
+        xmlHelper.createXml(torusNetwork.getNetlist(), torusNetwork.getRouting(), description, topology);
 
         return null;
     }
