@@ -9,6 +9,7 @@ import ru.stepanov.uocns.common.exceptions.BadRequestException;
 import ru.stepanov.uocns.common.exceptions.CommonException;
 import ru.stepanov.uocns.database.entities.Topology;
 import ru.stepanov.uocns.database.services.DatabaseService;
+import ru.stepanov.uocns.network.TControllerOCNS;
 import ru.stepanov.uocns.network.common.generator.Circulant;
 import ru.stepanov.uocns.network.common.generator.Mesh;
 import ru.stepanov.uocns.network.common.generator.Torus;
@@ -24,6 +25,9 @@ public class SimulatorService implements ISimulatorService {
 
     @Autowired
     DatabaseService databaseService;
+
+    @Autowired
+    TControllerOCNS fControllerOCNS;
 
     @Autowired
     XmlHelper xmlHelper;
