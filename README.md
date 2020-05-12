@@ -2,6 +2,7 @@
 Java web service providing API for simulation of networks on a chip and generation of configuration xml-files.
 
 Links:
+- [MIEM UOCNS](http://miem-uocns.ru)
 - [UOCNS API](http://miem-uocns.ru/swagger-ui.html)
 - [JavaDoc](http://miem-uocns.ru/doc/index.html)
 
