@@ -1,6 +1,7 @@
 package ru.stepanov.uocns.web.services.util;
 
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.query.SelectById;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.StringWriter;
+import java.util.UUID;
 
 @Component
 public class XmlHelper {
+
+    @Value("${generator.results.path}")
+    String CONFIG_PATH;
 
     @Autowired
     DatabaseService databaseService;
@@ -40,7 +45,7 @@ public class XmlHelper {
         objectContext = databaseService.getContext();
     }
 
-    public void createXml(int[][] netlist, int[][] routing, String description, Topology topology) throws InternalErrorException {
+    public String createXml(int[][] netlist, int[][] routing, String description, Long topologyId) throws InternalErrorException {
         try {
             StringBuilder netlistData = new StringBuilder("\n");
             for (int i = 0; i < routing.length; i++) {
@@ -58,17 +63,14 @@ public class XmlHelper {
                 routingData.append("\n");
             }
 
-            write(netlistData.toString(), routingData.toString(), description, topology);
-        } catch (Exception e){
+            return write(netlistData.toString(), routingData.toString(), description, topologyId);
+        } catch (Exception e) {
             log.error("Exception while creating XML: " + e.getMessage());
             throw new InternalErrorException("Exception while creating XML: " + e.getMessage());
         }
     }
 
-    @Value("${generator.results.path}")
-    String RESULTS_PATH;
-
-    private void write(String netlistData, String routingData, String description, Topology topology) throws InternalErrorException {
+    private String write(String netlistData, String routingData, String description, Long topologyId) throws InternalErrorException {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
@@ -155,11 +157,13 @@ public class XmlHelper {
             DOMSource source = new DOMSource(doc);
 
             //печатаем в консоль или файл
-            File folder = new File(RESULTS_PATH + description);
+            UUID uuid = UUID.randomUUID();
+            File folder = new File(CONFIG_PATH + description);
             if (!folder.exists()) {
                 folder.mkdir();
             }
-            StreamResult file = new StreamResult(new File(RESULTS_PATH + description + "/config-" + description + ".xml"));
+            String configPath = CONFIG_PATH + description + "/config-" + description + "-" + uuid + ".xml";
+            StreamResult file = new StreamResult(new File(configPath));
 
             //записываем данные
             StringWriter writer = new StringWriter();
@@ -168,12 +172,16 @@ public class XmlHelper {
 
             transformer.transform(source, file);
 
+            Topology topology = SelectById.query(Topology.class, topologyId).selectFirst(objectContext);
+
             TopologyXml topologyXml = objectContext.newObject(TopologyXml.class);
-            topologyXml.setIdTopology((Long) topology.getObjectId().getIdSnapshot().get("id"));
+            topologyXml.setXmlToTopology(topology);
             topologyXml.setName("config-" + description + ".xml");
             topologyXml.setContent(content);
+
             objectContext.commitChanges();
 
+            return configPath;
         } catch (Exception e) {
             log.error("Exception while generating XML-file: " + e.getMessage());
             throw new InternalErrorException("Exception while generating XML-file: " + e.getMessage());

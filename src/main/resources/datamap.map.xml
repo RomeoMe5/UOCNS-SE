@@ -8,6 +8,7 @@
 		<db-attribute name="columns" type="INTEGER"/>
 		<db-attribute name="description" type="VARCHAR" length="100000"/>
 		<db-attribute name="id" type="BIGINT" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="injection_rate" type="DOUBLE"/>
 		<db-attribute name="name" type="VARCHAR" length="256"/>
 		<db-attribute name="nodes" type="INTEGER"/>
 		<db-attribute name="rows" type="INTEGER"/>
@@ -34,6 +35,7 @@
 	<obj-entity name="Topology" className="ru.stepanov.uocns.database.entities.Topology" dbEntityName="topology">
 		<obj-attribute name="columns" type="int" db-attribute-path="columns"/>
 		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="injectionRate" type="double" db-attribute-path="injection_rate"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="nodes" type="int" db-attribute-path="nodes"/>
 		<obj-attribute name="rows" type="int" db-attribute-path="rows"/>

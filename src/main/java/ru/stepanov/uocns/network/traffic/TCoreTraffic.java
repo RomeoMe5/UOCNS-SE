@@ -17,9 +17,9 @@ public class TCoreTraffic
     }
 
     @Override
-    public Vector<TFlit> getNewPacket(long aPacketId, int iClock) {
-        this.setNextMessageTime(iClock, false);
-        int aPacketSize = this.getPacketSize();
+    public Vector<TFlit> getNewPacket(long aPacketId, int iClock, TNetworkManager tNetworkManager) {
+        this.setNextMessageTime(iClock, false, tNetworkManager);
+        int aPacketSize = this.getPacketSize(tNetworkManager);
         int aPacketCoreTo = this.getPacketCoreTo();
         Vector<TFlit> aPacket = new Vector<TFlit>();
         TFlit iFlit = this.getNewHeadFlit(aPacketId, aPacketCoreTo, aPacketSize, iClock);
@@ -36,12 +36,12 @@ public class TCoreTraffic
     }
 
     @Override
-    public void setNextMessageTime(int iClock, boolean nextClock) {
+    public void setNextMessageTime(int iClock, boolean nextClock, TNetworkManager tNetworkManager) {
         if (nextClock) {
             this.fClockNextPacket = iClock + 1;
             return;
         }
-        this.fClockNextPacket = (int) ((double) (-IConstants.fConfigNoC.fPacketAvgGenTime) * Math.log(TNetworkManager.getUtilities().getRandNextDouble())) + iClock + 1;
+        this.fClockNextPacket = (int) ((double) (-IConstants.fConfigNoC.fPacketAvgGenTime) * Math.log(tNetworkManager.getUtilities().getRandNextDouble())) + iClock + 1;
     }
 
     @Override
@@ -95,14 +95,14 @@ public class TCoreTraffic
     }
 
     @Override
-    public int getPacketSize() {
+    public int getPacketSize(TNetworkManager tNetworkManager) {
         int aNewMessageSize;
         int aBitsPerByte = 8;
         if (IConstants.fConfigNoC.fPacketIsFixedLength) {
             aNewMessageSize = IConstants.fConfigNoC.fPacketAvgLenght;
         } else {
             System.err.printf("\u041e\u0448\u0438\u0431\u043a\u0430, \u0412\u043e \u0432\u0445\u043e\u0434\u043d\u043e\u043c \u0444\u0430\u0439\u043b\u0435 \u0440\u0430\u0437\u043c\u0435\u0440 \u043f\u0430\u043a\u0435\u0442\u0430 \u0434\u043e\u043b\u0436\u0435\u043d \u0437\u0430\u0434\u0430\u0432\u0430\u0442\u044c\u0441\u044f \u0432 \u0444\u043b\u0438\u0442\u0430\u0445.\u0412 \u0442\u0435\u043a\u0443\u0449\u0435\u0439 \u0440\u0435\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u0438 \u0438\u043d\u0442\u0435\u0440\u043f\u0440\u0435\u0442\u0438\u0440\u0443\u0435\u0442\u0441\u044f \u043a\u0430\u043a \u0431\u0430\u0439\u0442\u044b.");
-            aNewMessageSize = (int) ((double) (-8 * IConstants.fConfigNoC.fPacketAvgLenght) * Math.log(TNetworkManager.getUtilities().getRandNextDouble()) / (double) IConstants.fConfigNoC.fFlitSize);
+            aNewMessageSize = (int) ((double) (-8 * IConstants.fConfigNoC.fPacketAvgLenght) * Math.log(tNetworkManager.getUtilities().getRandNextDouble()) / (double) IConstants.fConfigNoC.fFlitSize);
             aNewMessageSize = aNewMessageSize > 1 ? aNewMessageSize : 2;
         }
         return aNewMessageSize;

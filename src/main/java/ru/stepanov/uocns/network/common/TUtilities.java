@@ -11,7 +11,7 @@ import java.util.Vector;
 
 public class TUtilities {
     private Random fRandGenerator = new Random(12345);
-    private final Vector<Vector<TNocParameter>> fVtrNetworkParameters = new Vector();
+    private final Vector<Vector<TNocParameter>> fVtrNetworkParameters = new Vector<>();
 
     public static int getMinBitsCount(int aValue) {
         return (int) Math.ceil(Math.log(aValue) / Math.log(2.0));
@@ -39,7 +39,7 @@ public class TUtilities {
         } catch (Exception e) {
             return;
         }
-        Vector<TNocParameter> aVtrNetworkConfig = new Vector<TNocParameter>();
+        Vector<TNocParameter> aVtrNetworkConfig = new Vector<>();
         Node iNodeChild = aDocument.getFirstChild().getAttributes().item(0);
         aVtrNetworkConfig.add(new TNocParameter(iNodeChild.getNodeName(), iNodeChild.getNodeValue()));
         String[] nXmlNodesA = new String[]{"Netlist", "Routing"};

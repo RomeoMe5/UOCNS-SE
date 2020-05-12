@@ -23,6 +23,7 @@ public abstract class _Topology extends CayenneDataObject {
 
     public static final Property<Integer> COLUMNS = Property.create("columns", Integer.class);
     public static final Property<String> DESCRIPTION = Property.create("description", String.class);
+    public static final Property<Double> INJECTION_RATE = Property.create("injectionRate", Double.class);
     public static final Property<String> NAME = Property.create("name", String.class);
     public static final Property<Integer> NODES = Property.create("nodes", Integer.class);
     public static final Property<Integer> ROWS = Property.create("rows", Integer.class);
@@ -43,6 +44,14 @@ public abstract class _Topology extends CayenneDataObject {
     }
     public String getDescription() {
         return (String)readProperty("description");
+    }
+
+    public void setInjectionRate(double injectionRate) {
+        writeProperty("injectionRate", injectionRate);
+    }
+    public double getInjectionRate() {
+        Object value = readProperty("injectionRate");
+        return (value != null) ? (Double) value : 0;
     }
 
     public void setName(String name) {

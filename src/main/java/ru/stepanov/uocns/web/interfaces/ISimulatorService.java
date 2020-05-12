@@ -1,14 +1,14 @@
 package ru.stepanov.uocns.web.interfaces;
 
 import ru.stepanov.uocns.common.exceptions.CommonException;
-import ru.stepanov.uocns.web.models.*;
+import ru.stepanov.uocns.web.models.simulator.*;
 
 public interface ISimulatorService {
 
-    String MESH = "/mesh";
-    String CIRCULANT_OPTIMAL = "/circulant/optimal";
-    String CIRCULANT = "/circulant";
-    String TORUS = "/torus";
+    String MESH = "/simulator/mesh";
+    String CIRCULANT_OPTIMAL = "/simulator/circulant/optimal";
+    String CIRCULANT = "/simulator/circulant";
+    String TORUS = "/simulator/torus";
 
     String MESH_TOPOLOGY = "Mesh";
     String TORUS_TOPOLOGY = "Torus";

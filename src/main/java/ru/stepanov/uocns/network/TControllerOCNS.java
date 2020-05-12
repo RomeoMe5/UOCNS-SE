@@ -1,29 +1,23 @@
 package ru.stepanov.uocns.network;
 
-import com.trolltech.qt.QSignalEmitter;
-import com.trolltech.qt.QThread;
+import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.query.SelectById;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.stepanov.uocns.database.entities.Topology;
+import ru.stepanov.uocns.database.entities.TopologyReport;
+import ru.stepanov.uocns.database.entities.TopologyTable;
+import ru.stepanov.uocns.database.services.DatabaseService;
 import ru.stepanov.uocns.network.common.IConstants;
-import ru.stepanov.uocns.network.gui.TFormMain;
+import ru.stepanov.uocns.web.services.SimulatorService;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import javax.annotation.PostConstruct;
 
 @Component
-public class TControllerOCNS
-        extends QSignalEmitter
-        implements Runnable,
-        IControllerOCNS {
-    private static int[] $SWITCH_TABLE$network$TCommandOCNS;
-    public QSignalEmitter.Signal2<TControllerOCNS, String> fSglProgressChanged;
-    public QSignalEmitter.Signal2<TControllerOCNS, String> fSglNetworkSimulated;
-    public QSignalEmitter.Signal1<TControllerOCNS> fSglNetworkSimulatedAll;
-    private volatile QThread fThreadOCNS;
-    private volatile boolean fIsNeedThreadPause;
+public class TControllerOCNS implements IControllerOCNS {
+
     private double fThroughputNetwork;
     private double fThroughputSwitch;
     private double fPacketDelay;
@@ -40,48 +34,18 @@ public class TControllerOCNS
     private double fPacketCountHop;
     private double fPacketCountTotalTx;
     private double fPacketCountTotalRx;
-    private TFormMain form;
 
-    public TControllerOCNS() {
-        this.fSglNetworkSimulatedAll = new QSignalEmitter.Signal1();
-        this.fSglProgressChanged = new QSignalEmitter.Signal2();
-        this.fSglNetworkSimulated = new QSignalEmitter.Signal2();
-        this.fIsNeedThreadPause = false;
-    }
+    @Autowired
+    DatabaseService databaseService;
 
-    public TControllerOCNS(TFormMain form) {
-        this.fSglNetworkSimulatedAll = new QSignalEmitter.Signal1();
-        this.fSglProgressChanged = new QSignalEmitter.Signal2();
-        this.fSglNetworkSimulated = new QSignalEmitter.Signal2();
-        this.fIsNeedThreadPause = false;
-        this.form = form;
-    }
+    ObjectContext objectContext;
 
-    static int[] $SWITCH_TABLE$network$TCommandOCNS() {
-        int[] arrn;
-        int[] arrn2 = $SWITCH_TABLE$network$TCommandOCNS;
-        if (arrn2 != null) {
-            return arrn2;
-        }
-        arrn = new int[TCommandOCNS.values().length];
-        try {
-            arrn[TCommandOCNS.Continue.ordinal()] = 3;
-        } catch (NoSuchFieldError ignored) {
-        }
-        try {
-            arrn[TCommandOCNS.Pause.ordinal()] = 2;
-        } catch (NoSuchFieldError ignored) {
-        }
-        try {
-            arrn[TCommandOCNS.Start.ordinal()] = 1;
-        } catch (NoSuchFieldError ignored) {
-        }
-        try {
-            arrn[TCommandOCNS.Stop.ordinal()] = 4;
-        } catch (NoSuchFieldError ignored) {
-        }
-        $SWITCH_TABLE$network$TCommandOCNS = arrn;
-        return $SWITCH_TABLE$network$TCommandOCNS;
+    protected static final Logger log = LoggerFactory.getLogger(SimulatorService.class);
+
+
+    @PostConstruct
+    public void init() {
+        objectContext = databaseService.getContext();
     }
 
     void ResetPerformanceParameters() {
@@ -103,145 +67,118 @@ public class TControllerOCNS
         this.fFlitRatePerNode = 0.0;
     }
 
-    public void run() {
-        boolean aFileAppend = false;
-        double aDestInjectionRate = 0.05;
-        while (aDestInjectionRate <= 1.0) {
-            long aCountPercent;
-            TNetworkManager.getInstance().doNetworkSetupNext(false);
-            TNetworkManager.getUtilities().setRandSeedRandom();
-            IConstants.fConfigNoC.fPacketAvgGenTime = (int) ((double) IConstants.fConfigNoC.fPacketAvgLenght / aDestInjectionRate);
-            this.ResetPerformanceParameters();
-            long iCountTotal = IConstants.fConfigNoC.fCountPacketRx * (long) IConstants.fConfigNoC.fCountCores;
-            long aCountNextPersent = aCountPercent = iCountTotal / 100 * (long) IConstants.fConfigNoC.fCountRun;
-            int simulationProgress = 0;
-            int iSimulatorRun = 0;
-            while (iSimulatorRun < IConstants.fConfigNoC.fCountRun) {
-                TNetworkManager.getInstance().doNetworkReset(this);
-                TNetwork iNetwork = TNetworkManager.getNetworkInstance();
-                TNetworkManager.getUtilities().setRandSeedRandom();
-                iNetwork.setInitalEvents();
-                int iClock = 0;
-                do {
-                    TControllerOCNS tControllerOCNS = this;
-                    synchronized (tControllerOCNS) {
-                        try {
-                            while (this.fIsNeedThreadPause && this.fThreadOCNS == Thread.currentThread()) {
-                                this.wait();
-                            }
-                        } catch (InterruptedException interruptedException) {
-                            // empty catch block
-                        }
-                        if (this.fThreadOCNS != Thread.currentThread()) {
-                            if (1 == IConstants.fConfigNoC.fCountRun) {
-                                IConstants.fConfigNoC.fCountClocksTotal = iClock;
-                                this.fThreadOCNS = (QThread) Thread.currentThread();
-                                break;
-                            }
-                            return;
-                        }
-                    }
-                    try {
-                        iNetwork.moveTraficTxCore(iClock);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        iNetwork.setCrossbarLinks(iClock);
-                    } catch (Exception x) {
-                        x.printStackTrace();
-                    }
-                    try {
-                        iNetwork.moveTraficRxRouter(iClock);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        iNetwork.moveTraficTxRouter(iClock);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        iNetwork.doRestorePackets(iClock);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    iNetwork.doUpdateStatistic(iClock);
-                    iNetwork.doPrepareNextClock(iClock);
-                    int aCountRx = (int) TNetworkManager.getStatistic().getCountPacketRxTotal();
-                    if (aCountRx > 0 && (long) aCountRx / aCountNextPersent > 0) {
-                        this.fSglProgressChanged.emit(this, "" + ++simulationProgress);
-                        aCountNextPersent += aCountPercent;
-                    }
-                    ++iClock;
-                } while (true);
-                this.fPacketCountTotalTx += (double) TNetworkManager.getStatistic().getCountPacketTxTotal();
-                this.fPacketCountTotalRx += TNetworkManager.getStatistic().getCountPacketRxTotal();
-                this.fPacketCountGenError += TNetworkManager.getStatistic().getCountNewPacketErrAvg();
-                this.fPacketRate += TNetworkManager.getStatistic().getPacketRate();
-                this.fFlitRatePerNode += TNetworkManager.getStatistic().getFlitRatePerNode();
-                this.fCoreInjectionRate += TNetworkManager.getStatistic().getCoreInjectionRate();
-                this.fPacketDelay += TNetworkManager.getStatistic().getCountPacketTimeAvg();
-                this.fPacketCountHop += TNetworkManager.getStatistic().getCountPacketHopAvg();
-                this.fThroughputNetwork += TNetworkManager.getStatistic().getThroughputNetwork();
-                this.fThroughputSwitch += TNetworkManager.getStatistic().getThroughputSwitch();
-                this.fUtilizationCoreBufferRx += TNetworkManager.getStatistic().getUtilizationCoreBufferRxAvg();
-                this.fUtilizationCoreBufferTx += TNetworkManager.getStatistic().getUtilizationCoreBufferTxAvg();
-                this.fUtilizationRouterBufferRx += TNetworkManager.getStatistic().getUtilizationRouterBufferRxAvg();
-                this.fUtilizationRouterBufferTx += TNetworkManager.getStatistic().getUtilizationRouterBufferTxAvg();
-                this.fUtilizationNetworkBuffer += TNetworkManager.getStatistic().getUtilizationNetworkBufferAvg();
-                this.fUtilizationNetworkPLink += TNetworkManager.getStatistic().getUtilizationNetworkPLinkAvg();
-                ++iSimulatorRun;
-            }
-            this.fPacketCountTotalRx /= (double) iSimulatorRun;
-            this.fPacketCountTotalTx /= (double) iSimulatorRun;
-            this.fPacketCountGenError /= (double) iSimulatorRun;
-            this.fThroughputNetwork /= (double) iSimulatorRun;
-            this.fThroughputSwitch /= (double) iSimulatorRun;
-            this.fPacketRate /= (double) iSimulatorRun;
-            this.fFlitRatePerNode /= (double) iSimulatorRun;
-            this.fCoreInjectionRate /= (double) iSimulatorRun;
-            this.fPacketDelay /= (double) iSimulatorRun;
-            this.fPacketCountHop /= (double) iSimulatorRun;
-            this.fUtilizationCoreBufferRx /= (double) iSimulatorRun;
-            this.fUtilizationCoreBufferTx /= (double) iSimulatorRun;
-            this.fUtilizationRouterBufferRx /= (double) iSimulatorRun;
-            this.fUtilizationRouterBufferTx /= (double) iSimulatorRun;
-            this.fUtilizationNetworkPLink /= (double) iSimulatorRun;
-            this.fUtilizationNetworkBuffer /= (double) iSimulatorRun;
-            this.fSglNetworkSimulated.emit(this, this.GetPerformanceReport(IConstants.fConfigNoC.fCountClocksTotal));
-            String aPlotPoint = String.format("%10d\t\t%10.3f\t\t%4.2f\t\t%10.3f\n", IConstants.fConfigNoC.fPacketAvgGenTime, this.fPacketDelay, aDestInjectionRate, this.fCoreInjectionRate);
-            try {
-                String path;
+    public void simulate(Double destInjectionRate, Long topologyId, String configPath) {
 
-                if (form != null && form.outputTableFilepath != null && !form.outputTableFilepath.isEmpty()) {
-                    path = form.outputTableFilepath;
-                    Path finalPath = Paths.get(path);
-                    try {
-                        Files.createDirectories(finalPath.getParent());
-                    } catch (Exception e) {
-                    }
-                } else {
-                    path = IConstants.fConfigNoC.fDescription + ".txt";
+        TNetworkManager tNetworkManager = new TNetworkManager(configPath);
+
+        Topology topology = SelectById.query(Topology.class, topologyId).selectFirst(objectContext);
+
+        TopologyReport topologyReport = objectContext.newObject(TopologyReport.class);
+        topologyReport.setReportToTopology(topology);
+        topologyReport.setName(IConstants.fConfigNoC.fDescription + ".html");
+        StringBuilder topologyReportContent = new StringBuilder();
+
+        TopologyTable topologyTable = objectContext.newObject(TopologyTable.class);
+        topologyTable.setTableToTopology(topology);
+        topologyTable.setName(IConstants.fConfigNoC.fDescription + ".txt");
+        StringBuilder topologyTableContent = new StringBuilder();
+
+
+        long aCountPercent;
+        tNetworkManager.doNetworkSetupNext(false);
+        tNetworkManager.getUtilities().setRandSeedRandom();
+        IConstants.fConfigNoC.fPacketAvgGenTime = (int) ((double) IConstants.fConfigNoC.fPacketAvgLenght / destInjectionRate);
+        this.ResetPerformanceParameters();
+        long iCountTotal = IConstants.fConfigNoC.fCountPacketRx * (long) IConstants.fConfigNoC.fCountCores;
+        long aCountNextPersent = aCountPercent = iCountTotal / 100 * (long) IConstants.fConfigNoC.fCountRun;
+        int simulationProgress = 0;
+        int iSimulatorRun = 0;
+        while (iSimulatorRun < IConstants.fConfigNoC.fCountRun) {
+            tNetworkManager.doNetworkReset(this);
+            TNetwork iNetwork = tNetworkManager.getNetworkInstance();
+            tNetworkManager.getUtilities().setRandSeedRandom();
+            iNetwork.setInitalEvents(tNetworkManager);
+            int iClock = 0;
+            do {
+                IConstants.fConfigNoC.fCountClocksTotal = iClock;
+                try {
+                    iNetwork.moveTraficTxCore(iClock, tNetworkManager);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                File aFile = new File(path);
-                if (!aFile.exists()) {
-                    aFile.createNewFile();
+                try {
+                    iNetwork.setCrossbarLinks(iClock);
+                } catch (Exception x) {
+                    x.printStackTrace();
                 }
-
-                FileWriter aWriter = new FileWriter(aFile, aFileAppend);
-                BufferedWriter aBufferedWriter = new BufferedWriter(aWriter);
-                aBufferedWriter.write(aPlotPoint);
-                aBufferedWriter.close();
-                aFileAppend = true;
-            } catch (Exception x) {
-                return;
-            }
-            aDestInjectionRate += 0.05;
+                try {
+                    iNetwork.moveTraficRxRouter(iClock);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    iNetwork.moveTraficTxRouter(iClock, tNetworkManager);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    iNetwork.doRestorePackets(iClock, tNetworkManager);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                iNetwork.doUpdateStatistic(iClock, tNetworkManager);
+                iNetwork.doPrepareNextClock(iClock);
+                int aCountRx = (int) tNetworkManager.getStatistic().getCountPacketRxTotal();
+                if (aCountRx > 0 && (long) aCountRx / aCountNextPersent > 0) {
+                    ++simulationProgress;
+                    aCountNextPersent += aCountPercent;
+                }
+                ++iClock;
+            } while (simulationProgress < 100);
+            this.fPacketCountTotalTx += (double) tNetworkManager.getStatistic().getCountPacketTxTotal();
+            this.fPacketCountTotalRx += tNetworkManager.getStatistic().getCountPacketRxTotal();
+            this.fPacketCountGenError += tNetworkManager.getStatistic().getCountNewPacketErrAvg();
+            this.fPacketRate += tNetworkManager.getStatistic().getPacketRate();
+            this.fFlitRatePerNode += tNetworkManager.getStatistic().getFlitRatePerNode();
+            this.fCoreInjectionRate += tNetworkManager.getStatistic().getCoreInjectionRate();
+            this.fPacketDelay += tNetworkManager.getStatistic().getCountPacketTimeAvg();
+            this.fPacketCountHop += tNetworkManager.getStatistic().getCountPacketHopAvg();
+            this.fThroughputNetwork += tNetworkManager.getStatistic().getThroughputNetwork();
+            this.fThroughputSwitch += tNetworkManager.getStatistic().getThroughputSwitch();
+            this.fUtilizationCoreBufferRx += tNetworkManager.getStatistic().getUtilizationCoreBufferRxAvg();
+            this.fUtilizationCoreBufferTx += tNetworkManager.getStatistic().getUtilizationCoreBufferTxAvg();
+            this.fUtilizationRouterBufferRx += tNetworkManager.getStatistic().getUtilizationRouterBufferRxAvg();
+            this.fUtilizationRouterBufferTx += tNetworkManager.getStatistic().getUtilizationRouterBufferTxAvg();
+            this.fUtilizationNetworkBuffer += tNetworkManager.getStatistic().getUtilizationNetworkBufferAvg();
+            this.fUtilizationNetworkPLink += tNetworkManager.getStatistic().getUtilizationNetworkPLinkAvg();
+            ++iSimulatorRun;
         }
-        this.fSglProgressChanged.emit(this, "100");
-        this.fSglNetworkSimulatedAll.emit(this);
+        this.fPacketCountTotalRx /= iSimulatorRun;
+        this.fPacketCountTotalTx /= iSimulatorRun;
+        this.fPacketCountGenError /= iSimulatorRun;
+        this.fThroughputNetwork /= iSimulatorRun;
+        this.fThroughputSwitch /= iSimulatorRun;
+        this.fPacketRate /= iSimulatorRun;
+        this.fFlitRatePerNode /= iSimulatorRun;
+        this.fCoreInjectionRate /= iSimulatorRun;
+        this.fPacketDelay /= iSimulatorRun;
+        this.fPacketCountHop /= iSimulatorRun;
+        this.fUtilizationCoreBufferRx /= iSimulatorRun;
+        this.fUtilizationCoreBufferTx /= iSimulatorRun;
+        this.fUtilizationRouterBufferRx /= iSimulatorRun;
+        this.fUtilizationRouterBufferTx /= iSimulatorRun;
+        this.fUtilizationNetworkPLink /= iSimulatorRun;
+        this.fUtilizationNetworkBuffer /= iSimulatorRun;
+
+        String aPlotPoint = String.format("%10d\t\t%10.3f\t\t%4.2f\t\t%10.3f\n", IConstants.fConfigNoC.fPacketAvgGenTime, this.fPacketDelay, destInjectionRate, this.fCoreInjectionRate);
+
+        topologyReportContent.append(GetPerformanceReport(IConstants.fConfigNoC.fCountClocksTotal));
+        topologyTableContent.append(aPlotPoint);
+
+        topologyReport.setContent(topologyReportContent.toString());
+        topologyTable.setContent(topologyTableContent.toString());
+
+        objectContext.commitChanges();
     }
 
     private String getHtmlReportParameter(String aParameterName, String aParameterValue) {
@@ -280,53 +217,9 @@ public class TControllerOCNS
                 this.getHtmlReportParameter("Загруженность физических каналов сети, %:", String.format("%.3f", this.fUtilizationNetworkPLink)));
     }
 
-    public void AddCommand(TCommandOCNS aCommandOCNS) {
-        switch (TControllerOCNS.$SWITCH_TABLE$network$TCommandOCNS()[aCommandOCNS.ordinal()]) {
-            case 1: {
-                this.ExecCommandStart();
-                break;
-            }
-            case 4: {
-                this.ExecCommandStop();
-                break;
-            }
-            case 2: {
-                this.ExecCommandPause();
-                break;
-            }
-            case 3: {
-                this.ExecCommandContinue();
-                break;
-            }
-            default: {
-            }
-        }
-    }
-
-    private void ExecCommandStart() {
-        this.fThreadOCNS = new QThread(this, "ThreadOCNS");
-        this.fThreadOCNS.setDaemon(true);
-        this.fThreadOCNS.start();
-    }
-
-    private synchronized void ExecCommandStop() {
-        this.fThreadOCNS = null;
-        this.notify();
-        this.fIsNeedThreadPause = false;
-    }
-
-    private synchronized void ExecCommandPause() {
-        this.fIsNeedThreadPause = true;
-    }
-
-    private synchronized void ExecCommandContinue() {
-        this.fIsNeedThreadPause = false;
-        this.notify();
-    }
-
     @Override
     public void cbTerminate() {
-        this.ExecCommandStop();
     }
+
 }
 

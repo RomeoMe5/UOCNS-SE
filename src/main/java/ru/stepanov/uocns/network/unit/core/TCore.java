@@ -16,7 +16,7 @@ import ru.stepanov.uocns.network.unit.router.link.TPLinkTx;
 import java.util.Vector;
 
 public class TCore {
-    private static /* synthetic */ int[] $SWITCH_TABLE$network$common$TTypeFlit;
+    private static int[] $SWITCH_TABLE$network$common$TTypeFlit;
     public IRouter fRouter;
     public ICoreTraffic fCoreTraffic;
     TBufferPacketTx fBufferPacketTx;
@@ -80,27 +80,27 @@ public class TCore {
         this.fClockLastFlitRx = iClock;
     }
 
-    private void doGeneratePacket(int iClock) throws Exception {
+    private void doGeneratePacket(int iClock, TNetworkManager tNetworkManager) throws Exception {
         if (this.fCoreTraffic.getClockNextPacket() != iClock) {
             return;
         }
         int aSlotId = this.fBufferPacketTx.tryAllocFreeSlot();
         if (-1 == aSlotId) {
-            this.fCoreTraffic.setNextMessageTime(iClock, true);
-            TNetworkManager.getStatistic().incCountNewPacketErr(this.fId);
+            this.fCoreTraffic.setNextMessageTime(iClock, true, tNetworkManager);
+            tNetworkManager.getStatistic().incCountNewPacketErr(this.fId);
             return;
         }
         TPacket aPacket = new TPacket();
-        aPacket.setFlits(this.fCoreTraffic.getNewPacket(this.fNextPacketId++, iClock));
+        aPacket.setFlits(this.fCoreTraffic.getNewPacket(this.fNextPacketId++, iClock, tNetworkManager));
         this.fBufferPacketTx.insertPacket(aPacket, aSlotId);
-        TNetworkManager.getStatistic().incCountNewPacketWell(this.fId);
+        tNetworkManager.getStatistic().incCountNewPacketWell(this.fId);
     }
 
-    public void moveTraficExternal(int iClock) throws Exception {
-        this.doGeneratePacket(iClock);
+    public void moveTraficExternal(int iClock, TNetworkManager tNetworkManager) throws Exception {
+        this.doGeneratePacket(iClock, tNetworkManager);
         this.allocFreeVLink(iClock);
-        this.fillEmptyBuffer(iClock);
-        this.sendFlitToRouter(iClock);
+        this.fillEmptyBuffer(iClock, tNetworkManager);
+        this.sendFlitToRouter(iClock, tNetworkManager);
     }
 
     private void allocFreeVLink(int iClock) throws Exception {
@@ -129,7 +129,7 @@ public class TCore {
      * Enabled aggressive block sorting
      * Lifted jumps to return sites
      */
-    private void fillEmptyBuffer(int iClock) throws Exception {
+    private void fillEmptyBuffer(int iClock, TNetworkManager tNetworkManager) throws Exception {
         int iSlot = 0;
         while (iSlot < this.fBufferPacketTx.getSlotCount()) {
             {
@@ -142,7 +142,7 @@ public class TCore {
                         TFlit aFlit = this.fBufferPacketTx.popFront(iSlot);
                         this.fPLinkTx.pushBack(aFlit, iVLinkTxId, iClock);
                         if (TTypeFlit.Header == aFlit.getType()) {
-                            TNetworkManager.getStatistic().incCountCorePacketTx(this.fId);
+                            tNetworkManager.getStatistic().incCountCorePacketTx(this.fId);
                         }
 
                         this.fBufferPacketTx.isEmpty(iSlot);
@@ -157,7 +157,7 @@ public class TCore {
     /*
      * Enabled aggressive block sorting
      */
-    private void sendFlitToRouter(int iClock) throws Exception {
+    private void sendFlitToRouter(int iClock, TNetworkManager tNetworkManager) throws Exception {
         int iVLink = 0;
         while (iVLink < this.fVLinkCount) {
             block6:
@@ -185,7 +185,7 @@ public class TCore {
                 this.fRouter.pushBackRx(this.fSwitchCorePLinkId, aFlit, iClock);
                 this.fClockLastFlitTx = iClock;
                 this.fIsPLinkTxUsed = true;
-                TNetworkManager.getStatistic().incCountCoreFlitTx(this.fId);
+                tNetworkManager.getStatistic().incCountCoreFlitTx(this.fId);
                 return;
             }
             ++iVLink;
@@ -200,18 +200,18 @@ public class TCore {
         return this.fBufferPLinkRx.getBufferVLink(aVLinkId).canPushData(iClock);
     }
 
-    public void flitPushBackRx(TFlit aFlit, int iClock) throws Exception {
+    public void flitPushBackRx(TFlit aFlit, int iClock, TNetworkManager tNetworkManager) throws Exception {
         if (this.fId != aFlit.getCoreTo()) {
-            System.err.printf("[ERROR][TCore] \u041d\u0435 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435 \u0441\u0435\u0442\u0435\u0432\u043e\u0433\u043e \u0430\u0434\u0440\u0435\u0441\u0430 IP-\u044f\u0434\u0440\u0430 \u0438 \u0437\u043d\u0430\u0447\u0435\u043d\u0438\u044f \u043f\u043e\u043b\u044f CoreTo \u0444\u043b\u0438\u0442\u0430. {\n\tFlitType: %d\n\tCoreFrom: %d\n\tCoreTo:   %d\n\tCoreNow:  %d\n}\n", new Object[]{aFlit.getType(), aFlit.getCoreFrom(), aFlit.getCoreTo(), this.fId});
+            System.err.printf("[ERROR][TCore] Не совпадение сетевого адреса IP-ядра и значения поля CoreTo флита. {\n\tFlitType: %d\n\tCoreFrom: %d\n\tCoreTo:   %d\n\tCoreNow:  %d\n}\n", aFlit.getType(), aFlit.getCoreFrom(), aFlit.getCoreTo(), this.fId);
             return;
         }
         aFlit.doAddExtra("[Core" + this.fId + "]");
         this.fBufferPLinkRx.getBufferVLink(aFlit.getVLinkId()).pushBack(aFlit, iClock);
         aFlit.incHopCount();
-        TNetworkManager.getStatistic().incCountCoreFlitRx(this.fId);
+        tNetworkManager.getStatistic().incCountCoreFlitRx(this.fId);
     }
 
-    public void doRestorePackets(int iClock) throws Exception {
+    public void doRestorePackets(int iClock, TNetworkManager tNetworkManager) throws Exception {
         int iVLink = 0;
         while (iVLink < this.fVLinkCount) {
             int aClockLastServed;
@@ -221,14 +221,14 @@ public class TCore {
                 TFlit iFlit = this.fBufferPLinkRx.getBufferVLink(this.fVLinkIdLastServedRx).popFront(iClock);
                 switch (TCore.$SWITCH_TABLE$network$common$TTypeFlit()[iFlit.getType().ordinal()]) {
                     case 1: {
-                        this.fArrPacketFlitsRx[iFlit.getVLinkId()] = new Vector();
+                        this.fArrPacketFlitsRx[iFlit.getVLinkId()] = new Vector<>();
                         this.fArrPacketFlitsRx[iFlit.getVLinkId()].add(iFlit);
                         this.fArrCountPacketFlitsToRx[iFlit.getVLinkId()] = iFlit.gePacketSize() - 1;
                         return;
                     }
                     case 2: {
                         if (this.fArrPacketFlitsRx[iFlit.getVLinkId()] == null) {
-                            System.err.println("[ERROR][TCore] \u041d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d Header-\u0444\u043b\u0438\u0442 \u0434\u043b\u044f \u043f\u0440\u0438\u043d\u044f\u0442\u043e\u0433\u043e Data-\u0444\u043b\u0438\u0442\u0430.");
+                            System.err.println("[ERROR][TCore] Не найден Header-флит для принятого Data-флита.");
                             return;
                         }
                         this.fArrPacketFlitsRx[iFlit.getVLinkId()].add(iFlit);
@@ -241,13 +241,13 @@ public class TCore {
                 }
                 long aPacketId = this.fArrPacketFlitsRx[iFlit.getVLinkId()].firstElement().GetId();
                 if (!this.isPacketValid(this.fArrPacketFlitsRx[iFlit.getVLinkId()])) {
-                    System.err.printf("[ERROR][TCore] @todo: ", new Object[0]);
+                    System.err.print("[ERROR][TCore] @todo: ");
                     this.fArrPacketFlitsRx[iFlit.getVLinkId()] = null;
                     return;
                 }
-                TNetworkManager.getStatistic().incCountPacketRx(this.fId, aPacketId);
-                TNetworkManager.getStatistic().incCountPacketTime(this.fId, iClock - iFlit.getTimeGenerated());
-                TNetworkManager.getStatistic().incCountPacketHop(this.fId, iFlit.getHopCount());
+                tNetworkManager.getStatistic().incCountPacketRx(this.fId, aPacketId);
+                tNetworkManager.getStatistic().incCountPacketTime(this.fId, iClock - iFlit.getTimeGenerated());
+                tNetworkManager.getStatistic().incCountPacketHop(this.fId, iFlit.getHopCount());
                 this.fArrPacketFlitsRx[iFlit.getVLinkId()] = null;
                 return;
             }
@@ -265,17 +265,17 @@ public class TCore {
             TFlit iFlitData = aPacket.remove(0);
             ++iFlitDataId;
             if (aFlitHeader.getHopCount() == iFlitData.getHopCount()) continue;
-            System.err.printf("[ERROR][TCore] \u041d\u0435\u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435 \u043a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u0430 \u0445\u043e\u043f\u043e\u0432 \u0443 \u0444\u043b\u0438\u0442\u043e\u0432 Rx-\u043f\u0430\u043a\u0435\u0442\u0430 {\n\taHFlitHopCount: %d\n\tiDFlitHopCount: %d\n\tiDFlitId:       %d\n}\n", aFlitHeader.getHopCount(), iFlitData.getHopCount(), iFlitDataId);
+            System.err.printf("[ERROR][TCore] Несовпадение количества хопов у флитов Rx-пакета {\n\taHFlitHopCount: %d\n\tiDFlitHopCount: %d\n\tiDFlitId:       %d\n}\n", aFlitHeader.getHopCount(), iFlitData.getHopCount(), iFlitDataId);
             return false;
         }
         return true;
     }
 
-    public void doUpdateStatistic(int iClock) {
-        TNetworkManager.getStatistic().incCountUsedCoreSlotRx(this.fId, this.fBufferPLinkRx.getCountSlotUsed());
-        TNetworkManager.getStatistic().incCountUsedCoreSlotTx(this.fId, this.fPLinkTx.getCountSlotUsed());
+    public void doUpdateStatistic(int iClock, TNetworkManager tNetworkManager) {
+        tNetworkManager.getStatistic().incCountUsedCoreSlotRx(this.fId, this.fBufferPLinkRx.getCountSlotUsed());
+        tNetworkManager.getStatistic().incCountUsedCoreSlotTx(this.fId, this.fPLinkTx.getCountSlotUsed());
         if (this.fIsPLinkTxUsed) {
-            TNetworkManager.getStatistic().incCountUsedCorePLinkTx(this.fId);
+            tNetworkManager.getStatistic().incCountUsedCorePLinkTx(this.fId);
         }
         this.fIsPLinkTxUsed = false;
     }

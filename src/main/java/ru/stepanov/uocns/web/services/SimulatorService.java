@@ -1,6 +1,7 @@
 package ru.stepanov.uocns.web.services;
 
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.query.ObjectSelect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +9,16 @@ import org.springframework.stereotype.Service;
 import ru.stepanov.uocns.common.exceptions.BadRequestException;
 import ru.stepanov.uocns.common.exceptions.CommonException;
 import ru.stepanov.uocns.database.entities.Topology;
+import ru.stepanov.uocns.database.entities.TopologyReport;
+import ru.stepanov.uocns.database.entities.TopologyTable;
+import ru.stepanov.uocns.database.entities.TopologyXml;
 import ru.stepanov.uocns.database.services.DatabaseService;
 import ru.stepanov.uocns.network.TControllerOCNS;
 import ru.stepanov.uocns.network.common.generator.Circulant;
 import ru.stepanov.uocns.network.common.generator.Mesh;
 import ru.stepanov.uocns.network.common.generator.Torus;
 import ru.stepanov.uocns.web.interfaces.ISimulatorService;
-import ru.stepanov.uocns.web.models.*;
+import ru.stepanov.uocns.web.models.simulator.*;
 import ru.stepanov.uocns.web.services.util.XmlHelper;
 
 import javax.annotation.PostConstruct;
@@ -60,9 +64,29 @@ public class SimulatorService implements ISimulatorService {
             topology.setDescription(description);
             objectContext.commitChanges();
 
-            xmlHelper.createXml(circulantNetwork.getNetlist(), circulantNetwork.getRouting(), description, topology);
+            String configPath = xmlHelper.createXml(circulantNetwork.getNetlist(), circulantNetwork.getRouting(), description, (Long) topology.getObjectId().getIdSnapshot().get("id"));
+
+            fControllerOCNS.simulate(request.getDestInjectionRate(), (Long) topology.getObjectId().getIdSnapshot().get("id"), configPath);
+
+            TopologyReport topologyReport = ObjectSelect.query(TopologyReport.class)
+                    .where(TopologyReport.REPORT_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+            TopologyTable topologyTable = ObjectSelect.query(TopologyTable.class)
+                    .where(TopologyTable.TABLE_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+            TopologyXml topologyXml = ObjectSelect.query(TopologyXml.class)
+                    .where(TopologyXml.XML_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+
+            return CirculantResponse.builder()
+                    .id((Long) topology.getObjectId().getIdSnapshot().get("id"))
+                    .reportId((Long) topologyReport.getObjectId().getIdSnapshot().get("id"))
+                    .tableId((Long) topologyTable.getObjectId().getIdSnapshot().get("id"))
+                    .xmlId((Long) topologyXml.getObjectId().getIdSnapshot().get("id"))
+                    .name(topology.getName())
+                    .description(topology.getDescription())
+                    .nodes(topology.getNodes())
+                    .firstStep(request.getFirstStep())
+                    .secondStep(request.getSecondStep())
+                    .build();
         }
-        return null;
     }
 
     @Override
@@ -84,9 +108,27 @@ public class SimulatorService implements ISimulatorService {
             topology.setDescription(description);
             objectContext.commitChanges();
 
-            xmlHelper.createXml(circulantNetwork.getNetlist(), circulantNetwork.getRouting(), description, topology);
+            String configPath = xmlHelper.createXml(circulantNetwork.getNetlist(), circulantNetwork.getRouting(), description, (Long) topology.getObjectId().getIdSnapshot().get("id"));
+
+            fControllerOCNS.simulate(request.getDestInjectionRate(), (Long) topology.getObjectId().getIdSnapshot().get("id"), configPath);
+
+            TopologyReport topologyReport = ObjectSelect.query(TopologyReport.class)
+                    .where(TopologyReport.REPORT_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+            TopologyTable topologyTable = ObjectSelect.query(TopologyTable.class)
+                    .where(TopologyTable.TABLE_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+            TopologyXml topologyXml = ObjectSelect.query(TopologyXml.class)
+                    .where(TopologyXml.XML_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+
+            return CirculantResponse.builder()
+                    .id((Long) topology.getObjectId().getIdSnapshot().get("id"))
+                    .reportId((Long) topologyReport.getObjectId().getIdSnapshot().get("id"))
+                    .tableId((Long) topologyTable.getObjectId().getIdSnapshot().get("id"))
+                    .xmlId((Long) topologyXml.getObjectId().getIdSnapshot().get("id"))
+                    .name(topology.getName())
+                    .description(topology.getDescription())
+                    .nodes(topology.getNodes())
+                    .build();
         }
-        return null;
     }
 
     @Override
@@ -104,9 +146,27 @@ public class SimulatorService implements ISimulatorService {
         topology.setDescription(description);
         objectContext.commitChanges();
 
-        xmlHelper.createXml(meshNetwork.getNetlist(), meshNetwork.getRouting(), description, topology);
+        String configPath = xmlHelper.createXml(meshNetwork.getNetlist(), meshNetwork.getRouting(), description, (Long) topology.getObjectId().getIdSnapshot().get("id"));
 
-        return null;
+        fControllerOCNS.simulate(request.getDestInjectionRate(), (Long) topology.getObjectId().getIdSnapshot().get("id"), configPath);
+
+        TopologyReport topologyReport = ObjectSelect.query(TopologyReport.class)
+                .where(TopologyReport.REPORT_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+        TopologyTable topologyTable = ObjectSelect.query(TopologyTable.class)
+                .where(TopologyTable.TABLE_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+        TopologyXml topologyXml = ObjectSelect.query(TopologyXml.class)
+                .where(TopologyXml.XML_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+
+        return MeshResponse.builder()
+                .id((Long) topology.getObjectId().getIdSnapshot().get("id"))
+                .reportId((Long) topologyReport.getObjectId().getIdSnapshot().get("id"))
+                .tableId((Long) topologyTable.getObjectId().getIdSnapshot().get("id"))
+                .xmlId((Long) topologyXml.getObjectId().getIdSnapshot().get("id"))
+                .name(topology.getName())
+                .description(topology.getDescription())
+                .columns(topology.getColumns())
+                .rows(topology.getRows())
+                .build();
     }
 
     @Override
@@ -124,9 +184,28 @@ public class SimulatorService implements ISimulatorService {
         topology.setDescription(description);
         objectContext.commitChanges();
 
-        xmlHelper.createXml(torusNetwork.getNetlist(), torusNetwork.getRouting(), description, topology);
+        String configPath = xmlHelper.createXml(torusNetwork.getNetlist(), torusNetwork.getRouting(), description, (Long) topology.getObjectId().getIdSnapshot().get("id"));
 
-        return null;
+
+        fControllerOCNS.simulate(request.getDestInjectionRate(), (Long) topology.getObjectId().getIdSnapshot().get("id"), configPath);
+
+        TopologyReport topologyReport = ObjectSelect.query(TopologyReport.class)
+                .where(TopologyReport.REPORT_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+        TopologyTable topologyTable = ObjectSelect.query(TopologyTable.class)
+                .where(TopologyTable.TABLE_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+        TopologyXml topologyXml = ObjectSelect.query(TopologyXml.class)
+                .where(TopologyXml.XML_TO_TOPOLOGY.eq(topology)).selectFirst(objectContext);
+
+        return TorusResponse.builder()
+                .id((Long) topology.getObjectId().getIdSnapshot().get("id"))
+                .reportId((Long) topologyReport.getObjectId().getIdSnapshot().get("id"))
+                .tableId((Long) topologyTable.getObjectId().getIdSnapshot().get("id"))
+                .xmlId((Long) topologyXml.getObjectId().getIdSnapshot().get("id"))
+                .name(topology.getName())
+                .description(topology.getDescription())
+                .columns(topology.getColumns())
+                .rows(topology.getRows())
+                .build();
     }
 
 }

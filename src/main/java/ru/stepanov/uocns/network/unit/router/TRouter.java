@@ -12,7 +12,7 @@ public class TRouter
         implements IRouter,
         IRoute,
         ICrossbar {
-    private static /* synthetic */ int[] $SWITCH_TABLE$network$common$TTypeFlit;
+    private static int[] $SWITCH_TABLE$network$common$TTypeFlit;
     private final int fId;
     private final int fCountPLink;
     private final int fCountVLinkPerPLink;
@@ -24,7 +24,7 @@ public class TRouter
     private final boolean[] fArrIsUsedPLinkTx;
     private final int[] fArrCrossbar;
 
-    public TRouter(int aRouterId, int aNetworkAddress, int aCountPLinkCore, int aCountPLinkSwitch, int aVLinkCount) {
+    public TRouter(int aRouterId, int aCountPLinkCore, int aCountPLinkSwitch, int aVLinkCount) {
         this.fId = aRouterId;
         this.fCountVLinkPerPLink = aVLinkCount;
         this.fCountPLink = aCountPLinkCore + aCountPLinkSwitch;
@@ -86,16 +86,6 @@ public class TRouter
     @Override
     public void doConnectRouter(int aPLinkId, IRouter aRouter) {
         this.fArrConnectedRouter[aPLinkId] = aRouter;
-    }
-
-    public String getConnnectedRouters() {
-        String aConnectedRoutersPlinkId = "";
-        int iPLinkId = 0;
-        while (iPLinkId < this.fArrConnectedRouter.length) {
-            aConnectedRoutersPlinkId = this.fArrConnectedRouter[iPLinkId] != null ? String.valueOf(aConnectedRoutersPlinkId) + this.fArrConnectedRouter[iPLinkId].getId() + " " : String.valueOf(aConnectedRoutersPlinkId) + "-1 ";
-            ++iPLinkId;
-        }
-        return aConnectedRoutersPlinkId;
     }
 
     @Override
@@ -171,7 +161,7 @@ public class TRouter
         }
     }
 
-    private void sendFlitToRouter(IRouter aRouterTo, int aPLinkId, int iClock) throws Exception {
+    private void sendFlitToRouter(IRouter aRouterTo, int aPLinkId, int iClock, TNetworkManager tNetworkManager) throws Exception {
         TPLinkTx aPLinkControllerTx = this.fArrPLinkTx[aPLinkId];
         int iVLink = 0;
         while (iVLink < this.fCountVLinkPerPLink) {
@@ -204,7 +194,7 @@ public class TRouter
                         TFlit aFlit = aPLinkControllerTx.popFront(this.fArrVLinkLastServed[aPLinkId], iClock);
                         aRouterTo.pushBackRx(aRouterToPLinkId, aFlit, iClock);
                         this.fArrIsUsedPLinkTx[aPLinkId] = true;
-                        TNetworkManager.getStatistic().incCountRouterFlitTx(this.fId);
+                        tNetworkManager.getStatistic().incCountRouterFlitTx(this.fId);
                         return;
                     }
                 }
@@ -213,7 +203,7 @@ public class TRouter
         }
     }
 
-    private void sendFlitToCore(TCore aCoreTo, int aPLinkId, int iClock) throws Exception {
+    private void sendFlitToCore(TCore aCoreTo, int aPLinkId, int iClock, TNetworkManager tNetworkManager) throws Exception {
         TPLinkTx aPLinkControllerTx = this.fArrPLinkTx[aPLinkId];
         int iVLink = 0;
         while (iVLink < this.fCountVLinkPerPLink) {
@@ -228,9 +218,9 @@ public class TRouter
                 if (aTimeLastServed < iClock && aCoreTo.getClockLastFlitRx() < aTimeCoreWillFlitRx && ((aFlitType = aPLinkControllerTx.getFront(this.fArrVLinkLastServed[aPLinkId]).getType()) != TTypeFlit.Header || aCoreTo.canPushHead(this.fArrVLinkLastServed[aPLinkId], iClock)) && (aFlitType != TTypeFlit.Data || aCoreTo.canPush(this.fArrVLinkLastServed[aPLinkId], iClock))) {
                     aCoreTo.setClockLastFlitRx(iClock + 1);
                     TFlit aFlit = aPLinkControllerTx.popFront(this.fArrVLinkLastServed[aPLinkId], iClock);
-                    aCoreTo.flitPushBackRx(aFlit, iClock);
+                    aCoreTo.flitPushBackRx(aFlit, iClock, tNetworkManager);
                     this.fArrIsUsedPLinkTx[aPLinkId] = true;
-                    TNetworkManager.getStatistic().incCountRouterFlitTx(this.fId);
+                    tNetworkManager.getStatistic().incCountRouterFlitTx(this.fId);
                     return;
                 }
             }
@@ -239,18 +229,18 @@ public class TRouter
     }
 
     @Override
-    public void moveTraficExternal(int iClock) throws Exception {
+    public void moveTraficExternal(int iClock, TNetworkManager tNetworkManager) throws Exception {
         int iPLink = 0;
         while (iPLink < this.fCountPLink) {
             int iRouterId = iPLink;
             if (iPLink < this.fArrConnectedRouter.length) {
                 if (this.fArrConnectedRouter[iPLink] != null) {
-                    this.sendFlitToRouter(this.fArrConnectedRouter[iRouterId], iPLink, iClock);
+                    this.sendFlitToRouter(this.fArrConnectedRouter[iRouterId], iPLink, iClock, tNetworkManager);
                 }
             } else {
                 int iCoreId = iPLink - this.fArrConnectedRouter.length;
                 if (this.fArrConnectedCore[iCoreId] != null) {
-                    this.sendFlitToCore(this.fArrConnectedCore[iCoreId], iPLink, iClock);
+                    this.sendFlitToCore(this.fArrConnectedCore[iCoreId], iPLink, iClock, tNetworkManager);
                 }
             }
             ++iPLink;
@@ -272,13 +262,13 @@ public class TRouter
     }
 
     @Override
-    public void doUpdateStatistic(int iClock) {
+    public void doUpdateStatistic(int iClock, TNetworkManager tNetworkManager) {
         int iPLink = 0;
         while (iPLink < this.fArrPLinkRx.length) {
             if (this.fArrPLinkRx[iPLink] != null) {
-                TNetworkManager.getStatistic().incCountUsedRouterSlotRx(this.fId, this.fArrPLinkRx[iPLink].getCountSlotUsed());
-                TNetworkManager.getStatistic().incCountUsedRouterSlotTx(this.fId, this.fArrPLinkTx[iPLink].getCountSlotUsed());
-                TNetworkManager.getStatistic().incCountUsedRouterPLinkTx(this.fId, this.fArrIsUsedPLinkTx[iPLink] ? 1 : 0);
+                tNetworkManager.getStatistic().incCountUsedRouterSlotRx(this.fId, this.fArrPLinkRx[iPLink].getCountSlotUsed());
+                tNetworkManager.getStatistic().incCountUsedRouterSlotTx(this.fId, this.fArrPLinkTx[iPLink].getCountSlotUsed());
+                tNetworkManager.getStatistic().incCountUsedRouterPLinkTx(this.fId, this.fArrIsUsedPLinkTx[iPLink] ? 1 : 0);
                 this.fArrIsUsedPLinkTx[iPLink] = false;
             }
             ++iPLink;
@@ -301,7 +291,7 @@ public class TRouter
     }
 
     @Override
-    public int setConnectionHead(int aPLinkIdRx, int aVLinkIdRx, int aPLinkIdTx, int aVLinkIdTx) throws Exception {
+    public int setConnectionHead(int aPLinkIdRx, int aVLinkIdRx, int aPLinkIdTx, int aVLinkIdTx) {
         int aCrossbarValue;
         int aCrossbarItem = aPLinkIdRx * this.fCountVLinkPerPLink + aVLinkIdRx;
         this.fArrCrossbar[aCrossbarItem] = aCrossbarValue = aPLinkIdTx * this.fCountVLinkPerPLink + aVLinkIdTx;
@@ -312,26 +302,26 @@ public class TRouter
     public void setConnectionData(int aPLinkIdRx, int aVLinkIdRx, int aConnectionId) throws Exception {
         int aCrossbarItem = aPLinkIdRx * this.fCountVLinkPerPLink + aVLinkIdRx;
         if (this.fArrCrossbar[aCrossbarItem] != -1) {
-            throw new Exception("VLinkTx-\u0431\u0443\u0444\u0435\u0440 \u0437\u0430\u043d\u044f\u0442");
+            throw new Exception("VLinkTx-буфер занят");
         }
         this.fArrCrossbar[aCrossbarItem] = aConnectionId;
     }
 
     @Override
-    public void resetConnection(int aPLinkIdRx, int aVLinkIdRx) throws Exception {
+    public void resetConnection(int aPLinkIdRx, int aVLinkIdRx) {
         int aCrossbarItem = aPLinkIdRx * this.fCountVLinkPerPLink + aVLinkIdRx;
         this.fArrCrossbar[aCrossbarItem] = -1;
     }
 
     @Override
-    public boolean canPushData(int aConnectionId, int iClock) throws Exception {
+    public boolean canPushData(int aConnectionId, int iClock) {
         int aPLinkIdTx = aConnectionId / this.fCountVLinkPerPLink;
         int aVLinkIdTx = aConnectionId % this.fCountVLinkPerPLink;
         return this.fArrPLinkTx[aPLinkIdTx].canPushData(aVLinkIdTx, iClock);
     }
 
     @Override
-    public int tryAllocVLink(int aPLinkIdTx, int iClock) throws Exception {
+    public int tryAllocVLink(int aPLinkIdTx, int iClock) {
         return this.fArrPLinkTx[aPLinkIdTx].tryAllocVLink(iClock);
     }
 

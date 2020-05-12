@@ -9,7 +9,6 @@ import java.util.Scanner;
 import java.util.Vector;
 
 public class TNetworkManager {
-    private static TNetworkManager fNetworkManager = null;
     private static TNetwork fNetwork = null;
     private static TStatisticalData fStatisticalData = null;
     private static TUtilities fUtilities = null;
@@ -21,37 +20,28 @@ public class TNetworkManager {
         fConfigActive = 0;
     }
 
-    public static void doReadConfigFile(String aConfigFile) {
-        fNetworkManager = new TNetworkManager(aConfigFile);
-    }
-
-    public static TNetworkManager getInstance() {
-        return fNetworkManager;
-    }
-
-    public static TNetwork getNetworkInstance() {
+    public TNetwork getNetworkInstance() {
         return fNetwork;
     }
 
-    public static TUtilities getUtilities() {
+    public TUtilities getUtilities() {
         return fUtilities;
     }
 
-    public static TStatisticalData getStatistic() {
+    public TStatisticalData getStatistic() {
         return fStatisticalData;
     }
 
-    public boolean doNetworkSetupNext(boolean IsSwitchNetwork) {
+    public void doNetworkSetupNext(boolean IsSwitchNetwork) {
         fUtilities.setRandSeedRandom();
         Vector<TNocParameter> aVtrConfigNOC = fUtilities.getConfig(fConfigActive);
         if (aVtrConfigNOC == null) {
-            return false;
+            return;
         }
         this.setConfigNoC(aVtrConfigNOC);
         if (IsSwitchNetwork) {
             ++fConfigActive;
         }
-        return true;
     }
 
     public void doNetworkReset(IControllerOCNS aControllerOCNS) {
@@ -80,7 +70,6 @@ public class TNetworkManager {
                         nStrRouter[iStrRouter] = nStrRouter[iStrRouter].trim();
                         ++iStrRouter;
                     }
-                    int aCountRouterPort = 4;
                     IConstants.fConfigNoC.fNetlist = new int[nStrRouter.length][4];
                     int iRouterId = 0;
                     while (iRouterId < nStrRouter.length) {
@@ -134,8 +123,6 @@ public class TNetworkManager {
                     IConstants.fConfigNoC.fCountPacketRx = Integer.parseInt(iParameterValue);
                 } else if (iParameterKey.equalsIgnoreCase("CountPacketRxWarmUp")) {
                     IConstants.fConfigNoC.fCountPacketRxWarmUp = Integer.parseInt(iParameterValue);
-                } else if (iParameterKey.equalsIgnoreCase("IsModeGALS")) {
-                    // empty if block
                 }
             }
             ++iParameter;

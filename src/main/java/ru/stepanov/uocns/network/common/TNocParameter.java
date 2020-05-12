@@ -1,8 +1,8 @@
 package ru.stepanov.uocns.network.common;
 
 public class TNocParameter {
-    private String fKey;
-    private String fValue;
+    private final String fKey;
+    private final String fValue;
 
     public TNocParameter(String aKey, String aValue) {
         this.fKey = aKey;

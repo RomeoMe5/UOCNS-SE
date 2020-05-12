@@ -1,5 +1,6 @@
 package ru.stepanov.uocns.network.unit.router;
 
+import ru.stepanov.uocns.network.TNetworkManager;
 import ru.stepanov.uocns.network.traffic.TFlit;
 import ru.stepanov.uocns.network.unit.core.TCore;
 
@@ -23,11 +24,11 @@ public interface IRouter {
 
     void moveTraficInternal(int var1) throws Exception;
 
-    void moveTraficExternal(int var1) throws Exception;
+    void moveTraficExternal(int var1, TNetworkManager tNetworkManager) throws Exception;
 
     boolean canPushHead(int var1, int var2, int var3);
 
-    void doUpdateStatistic(int var1);
+    void doUpdateStatistic(int var1, TNetworkManager tNetworkManager);
 
     void doPrepareNextClock(int var1);
 

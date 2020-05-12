@@ -365,7 +365,7 @@ public class TStatisticalData {
             aCountPLinkTotal += this.fArrCountRouterPLink[iRouterId];
             ++iRouterId;
         }
-        aCountPLinkTotal += (long) IConstants.fConfigNoC.fCountCores;
+        aCountPLinkTotal += IConstants.fConfigNoC.fCountCores;
         int iCoreId = 0;
         while (iCoreId < IConstants.fConfigNoC.fCountCores) {
             aCountUsedPLinkTxTotal += this.fArrCountUsedCorePLinkTx[iCoreId];

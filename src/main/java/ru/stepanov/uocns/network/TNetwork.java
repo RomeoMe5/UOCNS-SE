@@ -8,8 +8,8 @@ import ru.stepanov.uocns.network.unit.router.TRouter;
 import java.util.Vector;
 
 public class TNetwork {
-    private Vector<TCore> fVtrCores = new Vector();
-    private Vector<IRouter> fVtrRouters = new Vector();
+    private final Vector<TCore> fVtrCores = new Vector<>();
+    private final Vector<IRouter> fVtrRouters = new Vector<>();
 
     public TNetwork() {
         this.doCreateNetworkCustom();
@@ -19,7 +19,7 @@ public class TNetwork {
         int iCoreId = 0;
         int iRouterId = 0;
         while (iRouterId < IConstants.fConfigNoC.fNetlist.length) {
-            TRouter iRouter = new TRouter(iRouterId, iRouterId, IConstants.fCountPLinkCores, IConstants.fConfigNoC.fCountPLinkRouters, IConstants.fConfigNoC.fCountVLinkPerPLink);
+            TRouter iRouter = new TRouter(iRouterId, IConstants.fCountPLinkCores, IConstants.fConfigNoC.fCountPLinkRouters, IConstants.fConfigNoC.fCountVLinkPerPLink);
             int iPLinkIdCore = 0;
             while (iPLinkIdCore < IConstants.fCountPLinkCores) {
                 TCore aCore = new TCore(iCoreId++, iRouter, iPLinkIdCore, IConstants.fConfigNoC.fCountVLinkPerPLink);
@@ -41,26 +41,22 @@ public class TNetwork {
             }
             ++iRouterId;
         }
-        Vector<String> aNetlistConnected = new Vector<String>();
         int iRouterId2 = 0;
         while (iRouterId2 < this.fVtrRouters.size()) {
-            TRouter iRouterCustom = (TRouter) this.fVtrRouters.get(iRouterId2);
-            aNetlistConnected.add(iRouterCustom.getConnnectedRouters());
             ++iRouterId2;
         }
-        int foo = 5;
     }
 
-    public void setInitalEvents() {
+    public void setInitalEvents(TNetworkManager tNetworkManager) {
         int iCoreId = 0;
         while (iCoreId < this.fVtrCores.size()) {
-            this.fVtrCores.get((int) iCoreId).fCoreTraffic.setNextMessageTime(0, false);
+            this.fVtrCores.get(iCoreId).fCoreTraffic.setNextMessageTime(0, false, tNetworkManager);
             ++iCoreId;
         }
         int iRouterId = 0;
         while (iRouterId < this.fVtrRouters.size()) {
             this.fVtrRouters.get(iRouterId).doResetCrossbarLinks();
-            TNetworkManager.getStatistic().setCountRouterPLink(iRouterId, this.fVtrRouters.get(iRouterId).getCountPLink());
+            tNetworkManager.getStatistic().setCountRouterPLink(iRouterId, this.fVtrRouters.get(iRouterId).getCountPLink());
             ++iRouterId;
         }
     }
@@ -73,10 +69,10 @@ public class TNetwork {
         }
     }
 
-    public void moveTraficTxCore(int iClock) throws Exception {
+    public void moveTraficTxCore(int iClock, TNetworkManager tNetworkManager) throws Exception {
         int iCoreId = 0;
         while (iCoreId < this.fVtrCores.size()) {
-            this.fVtrCores.get(iCoreId).moveTraficExternal(iClock);
+            this.fVtrCores.get(iCoreId).moveTraficExternal(iClock, tNetworkManager);
             ++iCoreId;
         }
     }
@@ -89,31 +85,31 @@ public class TNetwork {
         }
     }
 
-    public void moveTraficTxRouter(int iClock) throws Exception {
+    public void moveTraficTxRouter(int iClock, TNetworkManager tNetworkManager) throws Exception {
         int iRouterId = 0;
         while (iRouterId < this.fVtrRouters.size()) {
-            this.fVtrRouters.get(iRouterId).moveTraficExternal(iClock);
+            this.fVtrRouters.get(iRouterId).moveTraficExternal(iClock, tNetworkManager);
             ++iRouterId;
         }
     }
 
-    public void doRestorePackets(int iClock) throws Exception {
+    public void doRestorePackets(int iClock, TNetworkManager tNetworkManager) throws Exception {
         int iCoreId = 0;
         while (iCoreId < this.fVtrCores.size()) {
-            this.fVtrCores.get(iCoreId).doRestorePackets(iClock);
+            this.fVtrCores.get(iCoreId).doRestorePackets(iClock, tNetworkManager);
             ++iCoreId;
         }
     }
 
-    public void doUpdateStatistic(int iClock) {
+    public void doUpdateStatistic(int iClock, TNetworkManager tNetworkManager) {
         int iCoreId = 0;
         while (iCoreId < this.fVtrCores.size()) {
-            this.fVtrCores.get(iCoreId).doUpdateStatistic(iClock);
+            this.fVtrCores.get(iCoreId).doUpdateStatistic(iClock, tNetworkManager);
             ++iCoreId;
         }
         int iRouterId = 0;
         while (iRouterId < this.fVtrRouters.size()) {
-            this.fVtrRouters.get(iRouterId).doUpdateStatistic(iClock);
+            this.fVtrRouters.get(iRouterId).doUpdateStatistic(iClock, tNetworkManager);
             ++iRouterId;
         }
     }
