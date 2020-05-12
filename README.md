@@ -1,14 +1,16 @@
 # UOCNS simulator
 Java web service providing API for simulation of networks on a chip and generation of configuration xml-files.
 
-Links^
+Links:
 - [UOCNS API](http://miem-uocns.ru/swagger-ui.html)
 - [JavaDoc](http://miem-uocns.ru/doc/index.html)
+
 
 
 Dependencies:
 - PostgreSQL
 - Java 8 (or higher)
+
 
 Used frameworks and tools:
 - Spring Framework
