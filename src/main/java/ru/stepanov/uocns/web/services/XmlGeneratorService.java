@@ -5,6 +5,7 @@ import org.apache.cayenne.query.ObjectSelect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.stepanov.uocns.common.exceptions.BadRequestException;
 import ru.stepanov.uocns.common.exceptions.CommonException;
 import ru.stepanov.uocns.database.entities.Topology;
@@ -19,6 +20,7 @@ import ru.stepanov.uocns.web.services.util.XmlHelper;
 
 import javax.annotation.PostConstruct;
 
+@Service
 public class XmlGeneratorService implements IXmlGeneratorService {
 
     @Autowired

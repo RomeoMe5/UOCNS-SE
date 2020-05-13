@@ -6,12 +6,13 @@ import ru.stepanov.uocns.common.controllers.AbstractController;
 import ru.stepanov.uocns.common.exceptions.CommonException;
 import ru.stepanov.uocns.web.interfaces.IXmlGeneratorService;
 import ru.stepanov.uocns.web.models.xmlgen.*;
+import ru.stepanov.uocns.web.services.XmlGeneratorService;
 
 @RestController
 public class XmlGeneratorEndpoint extends AbstractController implements IXmlGeneratorService {
 
     @Autowired
-    IXmlGeneratorService xmlGeneratorService;
+    XmlGeneratorService xmlGeneratorService;
 
     @Override
     @CrossOrigin
