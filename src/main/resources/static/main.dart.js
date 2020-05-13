@@ -7778,12 +7778,13 @@ eh:function eh(a,b){this.a=a
 this.b=b},
 Dr:function Dr(){},
 R8:function R8(a){this.b=a},
-q7:function q7(a,b,c,d,e){var _=this
+q7:function q7(a,b,c,d,e,f){var _=this
 _.e=a
 _.f=b
-_.cy=c
-_.r1=d
-_.a=e},
+_.ch=c
+_.cy=d
+_.r1=e
+_.a=f},
 Uj:function Uj(){},
 u7:function u7(a){var _=this
 _.a=_.e=_.d=null
@@ -27882,13 +27883,13 @@ case 2:s=3
 return C.uk
 case 3:return P.bT()
 case 1:return P.bU(q)}}},u.EX)},
-L:function(a){var t,s=this,r=null,q=s.a,p=s.e,o=q.e,n=q.f
+L:function(a){var t,s=this,r=null,q=s.a,p=s.e,o=q.e,n=q.f,m=q.ch
 q=q.cy
 q=q.c
 if(q==null)q=C.ey
 t=s.gz5()
 s.a.toString
-return new K.ms(new S.Uj(),new S.td(r,r,r,new S.Ud(),r,o,r,n,p,new S.Ue(s),"",r,C.AA,q,r,t,r,r,C.p7,!1,!1,!1,!1,new S.Uf(),!1,r,r,new N.ic(s,u.By)),r)}}
+return new K.ms(new S.Uj(),new S.td(r,r,r,new S.Ud(),r,o,r,n,p,new S.Ue(s),m,r,C.AA,q,r,t,r,r,C.p7,!1,!1,!1,!1,new S.Uf(),!1,r,r,new N.ic(s,u.By)),r)}}
 S.Ud.prototype={
 $1$2:function(a,b,c){var t=null,s=H.c([],u.F8),r=$.F,q=c.j("G<0>"),p=c.j("aC<0>"),o=S.zw(C.cq),n=H.c([],u.tD),m=$.F,l=a==null?C.mW:a
 return new V.lY(b,!1,t,s,new N.b8(t,c.j("b8<hG<0>>")),new N.b8(t,u.R),new S.qC(),t,new P.aC(new P.G(r,q),p),o,n,l,new P.aC(new P.G(m,q),p),c.j("lY<0>"))},
@@ -46023,7 +46024,7 @@ L:function(a){var t,s,r,q,p,o,n=null
 new E.iL().jO(a)
 t=$.an
 s=$.aB
-r=L.aR("Romanov Alexander, Stepanov Mikhail",n,n,n,A.ae(n,n,$.cp(),n,n,n,n,n,n,n,n,t*1.4,n,n,n,n,!0,n,n,n,n,n,n),C.E)
+r=L.aR("Romanov Aleksandr, Stepanov Mikhail",n,n,n,A.ae(n,n,$.cp(),n,n,n,n,n,n,n,n,t*1.4,n,n,n,n,!0,n,n,n,n,n,n),C.E)
 q=$.an
 q=R.h0(!1,!0,L.aR("NRU HSE",n,n,n,A.ae(n,n,$.bw(),n,n,n,n,n,n,n,n,q*1.4,n,n,n,n,!0,n,n,n,n,n,n),n),n,!0,n,n,n,n,n,n,n,n,new N.Hq(),n)
 p=$.an
@@ -46084,7 +46085,7 @@ $C:"$3",
 $R:3}
 F.yt.prototype={
 L:function(a){var t=X.a1s(null,"Poppins")
-return new S.q7(P.aN(["/main",new F.Nf(),"/simulator",new F.Ng(),"/generator",new F.Nh(),"/about",new F.Ni()],u.N,u.hw),"/main",t,!1,null)}}
+return new S.q7(P.aN(["/main",new F.Nf(),"/simulator",new F.Ng(),"/generator",new F.Nh(),"/about",new F.Ni()],u.N,u.hw),"/main","UOCNS",t,!1,null)}}
 F.Nf.prototype={
 $1:function(a){return new O.ip(null)},
 $S:182}
@@ -46114,7 +46115,7 @@ o=$.an
 p=M.af(c,L.aR("Simulator written in Java 11 with Spring Framework.",c,c,c,A.ae(c,c,$.cp(),c,c,c,c,c,c,c,c,o*2.5,c,c,c,c,!0,c,c,c,c,c,c),C.E),c,c,c,c,c,new V.K(p*35,0,p*20,0),c)
 o=$.an
 n=$.aB*20
-n=M.af(c,L.aR('This application is the final work of the bachelor Mikhail Stepanov, a student of the educational program "Informatics and Computer Engineering" MIEM NRU HSE under the supervision of Associate Professor of Computer Engineering Alexander Romanov.',c,c,c,A.ae(c,c,$.cp(),c,c,c,c,c,c,c,c,o*2.5,c,c,c,c,!0,c,c,c,c,c,c),C.E),c,c,c,c,c,new V.K(n,0,n,0),c)
+n=M.af(c,L.aR('This application is the final work of the bachelor Stepanov Mikhail, a student of the educational program "Informatics and Computer Engineering" MIEM NRU HSE under the supervision of Associate Professor of Computer Engineering Romanov Aleksandr.',c,c,c,A.ae(c,c,$.cp(),c,c,c,c,c,c,c,c,o*2.5,c,c,c,c,!0,c,c,c,c,c,c),C.E),c,c,c,c,c,new V.K(n,0,n,0),c)
 m=$.an
 l=$.aB
 l=M.af(c,L.aR("API described in Swagger 2 - ",c,c,c,A.ae(c,c,$.cp(),c,c,c,c,c,c,c,c,m*2.5,c,c,c,c,!0,c,c,c,c,c,c),C.E),c,c,c,c,c,new V.K(l*34,0,0,0),c)
@@ -46136,7 +46137,7 @@ g=$.aB
 g=M.af(c,L.aR("Contacts",c,c,c,A.ae(c,c,$.cK(),c,c,c,c,c,c,c,c,l*3,c,c,c,c,!0,c,c,c,c,c,c),C.E),c,c,c,c,c,new V.K(g*45,0,g*25,0),c)
 f=$.aB
 e=$.an
-f=M.af(c,L.aR("Romanov Alexander, associate professor: ",c,c,c,A.ae(c,c,$.cp(),c,c,c,c,c,c,c,c,e*2.5,c,c,c,c,!0,c,c,c,c,c,c),C.E),c,c,c,c,c,new V.K(f*32,0,0,0),c)
+f=M.af(c,L.aR("Romanov Aleksandr, associate professor: ",c,c,c,A.ae(c,c,$.cp(),c,c,c,c,c,c,c,c,e*2.5,c,c,c,c,!0,c,c,c,c,c,c),C.E),c,c,c,c,c,new V.K(f*32,0,0,0),c)
 e=$.an
 e=T.d6(H.c([f,R.h0(!1,!0,L.aR(" a.romanov@hse.ru",c,c,c,A.ae(c,c,$.bw(),c,c,c,c,c,c,c,c,e*2.5,c,c,c,c,!0,c,c,c,c,c,c),c),c,!0,c,c,c,c,c,c,c,c,new U.RQ(),c)],j),C.O,C.P)
 f=$.aB
@@ -46145,7 +46146,7 @@ f=M.af(c,L.aR("Stepanov Mikhail, student: ",c,c,c,A.ae(c,c,$.cp(),c,c,c,c,c,c,c,
 d=$.an
 d=T.d6(H.c([f,R.h0(!1,!0,L.aR(" mastepanov@edu.hse.ru",c,c,c,A.ae(c,c,$.bw(),c,c,c,c,c,c,c,c,d*2.5,c,c,c,c,!0,c,c,c,c,c,c),c),c,!0,c,c,c,c,c,c,c,c,new U.RR(),c)],j),C.O,C.P)
 f=$.an
-return M.Ph(t,T.li(H.c([new A.jH(c),new T.aE(c,s*5,c,c),r,q,p,new T.aE(c,o*2,c,c),n,new T.aE(c,m*5,c,c),k,i,h,new T.aE(c,l*4,c,c),g,e,d,new T.aE(c,f*10,c,c),M.af(c,new N.jk(c),c,c,c,c,c,new V.K(0,0,0,f*0),c)],j),C.bR,C.O,C.P))}}
+return M.Ph(t,T.li(H.c([new A.jH(c),new T.aE(c,s*5,c,c),r,q,p,new T.aE(c,o*2,c,c),n,new T.aE(c,m*5,c,c),k,i,h,new T.aE(c,l*5,c,c),g,e,d,new T.aE(c,f*15,c,c),M.af(c,new N.jk(c),c,c,c,c,c,new V.K(0,0,0,f*0),c)],j),C.bR,C.O,C.P))}}
 U.RN.prototype={
 $0:function(){return T.fL("http://miem-uocns.ru/swagger-ui.html")},
 $S:12}

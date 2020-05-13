@@ -1,1 +1,17 @@
-{"packages/cupertino_icons/assets/CupertinoIcons.ttf":["packages/cupertino_icons/assets/CupertinoIcons.ttf"],"assets/poppins/Poppins-Regular.ttf":["assets/poppins/Poppins-Regular.ttf"],"assets/images/logo_chip.png":["assets/images/logo_chip.png"],"assets/images/logo_hse.png":["assets/images/logo_hse.png"],"assets/images/logo_xml.png":["assets/images/logo_xml.png"]}
+{
+  "packages/cupertino_icons/assets/CupertinoIcons.ttf": [
+    "packages/cupertino_icons/assets/CupertinoIcons.ttf"
+  ],
+  "assets/poppins/Poppins-Regular.ttf": [
+    "assets/poppins/Poppins-Regular.ttf"
+  ],
+  "assets/images/logo_chip.png": [
+    "assets/images/logo_chip.png"
+  ],
+  "assets/images/logo_hse.png": [
+    "assets/images/logo_hse.png"
+  ],
+  "assets/images/logo_xml.png": [
+    "assets/images/logo_xml.png"
+  ]
+}
