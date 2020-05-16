@@ -186,7 +186,7 @@ public class TControllerOCNS implements IControllerOCNS {
     }
 
     private String GetPerformanceReport(int aClocksTotal) {
-        return String.format("Конфигурация сети на кристалле\n\n%s%s\n\n%s\n%s\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n%s\n\n\nУсредненные результаты моделирования\n\n%s\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n%s\n%s",
+        return String.format("Конфигурация сети на кристалле\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n%s\n\n\nУсредненные результаты моделирования\n\n%s\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n%s\n%s",
                 this.getReportParameter("Описание сети:", IConstants.fConfigNoC.fDescription),
                 this.getReportParameter("Количество IP-ядер:", "" + IConstants.fConfigNoC.fCountCores),
                 this.getReportParameter("Размер флита, бит:", "" + IConstants.fConfigNoC.fFlitSize),
