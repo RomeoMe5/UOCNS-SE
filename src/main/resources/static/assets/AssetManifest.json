@@ -1,1 +1,20 @@
-{"packages/cupertino_icons/assets/CupertinoIcons.ttf":["packages/cupertino_icons/assets/CupertinoIcons.ttf"],"assets/poppins/Poppins-Regular.ttf":["assets/poppins/Poppins-Regular.ttf"],"assets/images/logo_chip.png":["assets/images/logo_chip.png"],"assets/images/logo_hse.png":["assets/images/logo_hse.png"],"assets/images/logo_xml.png":["assets/images/logo_xml.png"]}
+{
+  "assets/Bebas_Neue/BebasNeue-Regular.ttf": [
+    "assets/Bebas_Neue/BebasNeue-Regular.ttf"
+  ],
+  "packages/cupertino_icons/assets/CupertinoIcons.ttf": [
+    "packages/cupertino_icons/assets/CupertinoIcons.ttf"
+  ],
+  "assets/Roboto/Roboto-Regular.ttf": [
+    "assets/Roboto/Roboto-Regular.ttf"
+  ],
+  "assets/images/logo_chip.png": [
+    "assets/images/logo_chip.png"
+  ],
+  "assets/images/logo_hse.png": [
+    "assets/images/logo_hse.png"
+  ],
+  "assets/images/logo_xml.png": [
+    "assets/images/logo_xml.png"
+  ]
+}
