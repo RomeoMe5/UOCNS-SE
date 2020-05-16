@@ -28,4 +28,7 @@ public class MeshResponse {
     private Integer rows;
 
     private Double destInjectionRate;
+
+    private String content;
+
 }

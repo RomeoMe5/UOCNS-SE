@@ -181,40 +181,40 @@ public class TControllerOCNS implements IControllerOCNS {
         objectContext.commitChanges();
     }
 
-    private String getHtmlReportParameter(String aParameterName, String aParameterValue) {
-        return String.format("<tr><td width=25></td><td >%s</td><td width=75>%s</td></tr>", aParameterName, aParameterValue);
+    private String getReportParameter(String aParameterName, String aParameterValue) {
+        return String.format("%s   %s", aParameterName, aParameterValue);
     }
 
     private String GetPerformanceReport(int aClocksTotal) {
-        return String.format("<b>Конфигурация сети на кристалле:</b><p><table width=100%%>%s%s</table><p><table width=100%%>%s%s%s%s</table><p><table width=100%%>%s%s</table><p><table width=100%%>%s%s%s</table><p><b>Усредненные результаты моделирования:</b><p><table width=100%%>%s</table><p><table width=100%%>%s%s%s</table><p><table width=100%%>%s%s%s%s%s</table><p><table width=100%%>%s%s</table><p><table width=100%%>%s%s</table><p><table width=100%%>%s%s</table><p><table width=100%%>%s%s</table><p></p>",
-                this.getHtmlReportParameter("Описание сети:", IConstants.fConfigNoC.fDescription),
-                this.getHtmlReportParameter("Количество IP-ядер:", "" + IConstants.fConfigNoC.fCountCores),
-                this.getHtmlReportParameter("Размер флита, бит:", "" + IConstants.fConfigNoC.fFlitSize),
-                this.getHtmlReportParameter("Средняя длина пакета, флитов:", "" + IConstants.fConfigNoC.fPacketAvgLenght),
-                this.getHtmlReportParameter("Фиксированный размер пакета, флитов:", "" + IConstants.fConfigNoC.fPacketIsFixedLength),
-                this.getHtmlReportParameter("Средний период генерации пакетов, тактов:", "" + IConstants.fConfigNoC.fPacketAvgGenTime),
-                this.getHtmlReportParameter("Количество виртуальных каналов:", "" + IConstants.fConfigNoC.fCountVLinkPerPLink),
-                this.getHtmlReportParameter("Размер буфера виртуального канала, флитов:", "" + IConstants.fConfigNoC.fSizeVLinkBuffer),
-                this.getHtmlReportParameter("Время моделирования, принятых пакетов:", "" + IConstants.fConfigNoC.fCountPacketRx),
-                this.getHtmlReportParameter("Время насыщения модели сети, принятых пакетов:", "" + IConstants.fConfigNoC.fCountPacketRxWarmUp),
-                this.getHtmlReportParameter("Количество прогонов симулятора:", "" + IConstants.fConfigNoC.fCountRun),
-                this.getHtmlReportParameter("Время моделирования, тактов:", "" + aClocksTotal),
-                this.getHtmlReportParameter("Количество отправленных пакетов:", String.format("%.0f", this.fPacketCountTotalTx)),
-                this.getHtmlReportParameter("Количество принятых пакетов:", String.format("%.0f", this.fPacketCountTotalRx)),
-                this.getHtmlReportParameter("Ошибки генерации пакетов:", String.format("%.0f", this.fPacketCountGenError)),
-                this.getHtmlReportParameter("Скорость генерации пакетов, пакетов/такт:", String.format("%.3f", this.fPacketRate)),
-                this.getHtmlReportParameter("Скорость генерации флитов, флитов/такт/ядро:", String.format("%.3f", this.fFlitRatePerNode)),
-                this.getHtmlReportParameter("Скорость отправки флитов, флитов/такт/ядро:", String.format("%.3f", this.fCoreInjectionRate)),
-                this.getHtmlReportParameter("Время доставки пакета, тактов:", String.format("%.3f", this.fPacketDelay)),
-                this.getHtmlReportParameter("Количество хопов пакета:", String.format("%.3f", this.fPacketCountHop - 2.0)),
-                this.getHtmlReportParameter("Пропускная способность сети, флитов/такт:", String.format("%.3f", this.fThroughputNetwork)),
-                this.getHtmlReportParameter("Пропускная способность роутера, флитов/такт:", String.format("%.3f", this.fThroughputSwitch)),
-                this.getHtmlReportParameter("Загруженность принимающих буферов IP-ядра, %:", String.format("%.3f", this.fUtilizationCoreBufferRx)),
-                this.getHtmlReportParameter("Загруженность передающих буферов IP-ядра %:", String.format("%.3f", this.fUtilizationCoreBufferTx)),
-                this.getHtmlReportParameter("Загруженность принимающих буферов роутеров, %:", String.format("%.3f", this.fUtilizationRouterBufferRx)),
-                this.getHtmlReportParameter("Загруженность передающих буферов роутеров, %:", String.format("%.3f", this.fUtilizationRouterBufferTx)),
-                this.getHtmlReportParameter("Загруженность буферов сети, %/такт:", String.format("%.3f", this.fUtilizationNetworkBuffer)),
-                this.getHtmlReportParameter("Загруженность физических каналов сети, %:", String.format("%.3f", this.fUtilizationNetworkPLink)));
+        return String.format("Конфигурация сети на кристалле\n\n%s%s\n\n%s\n%s\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n%s\n\n\nУсредненные результаты моделирования\n\n%s\n\n%s\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n%s\n%s",
+                this.getReportParameter("Описание сети:", IConstants.fConfigNoC.fDescription),
+                this.getReportParameter("Количество IP-ядер:", "" + IConstants.fConfigNoC.fCountCores),
+                this.getReportParameter("Размер флита, бит:", "" + IConstants.fConfigNoC.fFlitSize),
+                this.getReportParameter("Средняя длина пакета, флитов:", "" + IConstants.fConfigNoC.fPacketAvgLenght),
+                this.getReportParameter("Фиксированный размер пакета, флитов:", "" + IConstants.fConfigNoC.fPacketIsFixedLength),
+                this.getReportParameter("Средний период генерации пакетов, тактов:", "" + IConstants.fConfigNoC.fPacketAvgGenTime),
+                this.getReportParameter("Количество виртуальных каналов:", "" + IConstants.fConfigNoC.fCountVLinkPerPLink),
+                this.getReportParameter("Размер буфера виртуального канала, флитов:", "" + IConstants.fConfigNoC.fSizeVLinkBuffer),
+                this.getReportParameter("Время моделирования, принятых пакетов:", "" + IConstants.fConfigNoC.fCountPacketRx),
+                this.getReportParameter("Время насыщения модели сети, принятых пакетов:", "" + IConstants.fConfigNoC.fCountPacketRxWarmUp),
+                this.getReportParameter("Количество прогонов симулятора:", "" + IConstants.fConfigNoC.fCountRun),
+                this.getReportParameter("Время моделирования, тактов:", "" + aClocksTotal),
+                this.getReportParameter("Количество отправленных пакетов:", String.format("%.0f", this.fPacketCountTotalTx)),
+                this.getReportParameter("Количество принятых пакетов:", String.format("%.0f", this.fPacketCountTotalRx)),
+                this.getReportParameter("Ошибки генерации пакетов:", String.format("%.0f", this.fPacketCountGenError)),
+                this.getReportParameter("Скорость генерации пакетов, пакетов/такт:", String.format("%.3f", this.fPacketRate)),
+                this.getReportParameter("Скорость генерации флитов, флитов/такт/ядро:", String.format("%.3f", this.fFlitRatePerNode)),
+                this.getReportParameter("Скорость отправки флитов, флитов/такт/ядро:", String.format("%.3f", this.fCoreInjectionRate)),
+                this.getReportParameter("Время доставки пакета, тактов:", String.format("%.3f", this.fPacketDelay)),
+                this.getReportParameter("Количество хопов пакета:", String.format("%.3f", this.fPacketCountHop - 2.0)),
+                this.getReportParameter("Пропускная способность сети, флитов/такт:", String.format("%.3f", this.fThroughputNetwork)),
+                this.getReportParameter("Пропускная способность роутера, флитов/такт:", String.format("%.3f", this.fThroughputSwitch)),
+                this.getReportParameter("Загруженность принимающих буферов IP-ядра, %:", String.format("%.3f", this.fUtilizationCoreBufferRx)),
+                this.getReportParameter("Загруженность передающих буферов IP-ядра %:", String.format("%.3f", this.fUtilizationCoreBufferTx)),
+                this.getReportParameter("Загруженность принимающих буферов роутеров, %:", String.format("%.3f", this.fUtilizationRouterBufferRx)),
+                this.getReportParameter("Загруженность передающих буферов роутеров, %:", String.format("%.3f", this.fUtilizationRouterBufferTx)),
+                this.getReportParameter("Загруженность буферов сети, %/такт:", String.format("%.3f", this.fUtilizationNetworkBuffer)),
+                this.getReportParameter("Загруженность физических каналов сети, %:", String.format("%.3f", this.fUtilizationNetworkPLink)));
     }
 
     @Override

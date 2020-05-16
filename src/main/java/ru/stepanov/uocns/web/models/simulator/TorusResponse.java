@@ -28,4 +28,6 @@ public class TorusResponse {
     private Integer rows;
 
     private Double destInjectionRate;
+
+    private String content;
 }

@@ -85,6 +85,7 @@ public class SimulatorService implements ISimulatorService {
                     .nodes(topology.getNodes())
                     .firstStep(request.getFirstStep())
                     .secondStep(request.getSecondStep())
+                    .content(topologyReport.getContent())
                     .build();
         }
     }
@@ -127,6 +128,7 @@ public class SimulatorService implements ISimulatorService {
                     .name(topology.getName())
                     .description(topology.getDescription())
                     .nodes(topology.getNodes())
+                    .content(topologyReport.getContent())
                     .build();
         }
     }
@@ -166,6 +168,7 @@ public class SimulatorService implements ISimulatorService {
                 .description(topology.getDescription())
                 .columns(topology.getColumns())
                 .rows(topology.getRows())
+                .content(topologyReport.getContent())
                 .build();
     }
 
@@ -205,6 +208,7 @@ public class SimulatorService implements ISimulatorService {
                 .description(topology.getDescription())
                 .columns(topology.getColumns())
                 .rows(topology.getRows())
+                .content(topologyReport.getContent())
                 .build();
     }
 

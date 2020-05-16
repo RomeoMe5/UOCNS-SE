@@ -31,4 +31,6 @@ public class CirculantResponse {
 
     private Double destInjectionRate;
 
+    private String content;
+
 }
