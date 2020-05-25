@@ -131,27 +131,20 @@ public class Mesh extends Network {
                 targetRow = j / m;
                 if (i < j) {
                     if (currentRow < targetRow) {
-                        //спускаемся вниз
                         routing[i][j] = 1;
-                    } else { //если ==
-                        // идем направо
+                    } else {
                         routing[i][j] = 2;
                     }
                 } else if (i > j) {
                     if (currentRow > targetRow) {
-                        //поднимаемся наверх
                         routing[i][j] = 3;
-                    } else { // если ==
-                        // идем налево
+                    } else {
                         routing[i][j] = 0;
                     }
-                } else { // если i == j
-                    //передача в IP
+                } else {
                     routing[i][j] = 4;
                 }
             }
-        }
-
-        setRouting(routing);
+        }setRouting(routing);
     }
 }

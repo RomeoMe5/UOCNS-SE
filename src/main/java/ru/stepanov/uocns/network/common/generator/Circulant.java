@@ -13,11 +13,9 @@ public class Circulant extends Network {
 
     public Circulant(int k) {
         this.k = k;
-        //диаметр предельно оптимального циркулянта
         int d = (int) Math.round((Math.sqrt(2 * k - 1) - 1) / 2);
         this.s1 = d;
         this.s2 = d + 1;
-
     }
 
     public Circulant(int k, int s1, int s2) {
