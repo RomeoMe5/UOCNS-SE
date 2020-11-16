@@ -1,4 +1,4 @@
-# UOCNS simulator
+# UOCNS-SE simulator
 Java web service providing API for simulation of networks on a chip and generation of configuration xml-files.
 
 Links:
