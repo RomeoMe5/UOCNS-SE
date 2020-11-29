@@ -1,5 +1,9 @@
 # UOCNS-SE simulator
 Java web service providing API for simulation of networks on a chip and generation of configuration xml-files.
+      
+Aughtors:      
+Romanov A. Yu. (a.romanov@hse.ru)      
+Stepanov M. A.    
 
 Links:
 - [MIEM UOCNS](http://miem-uocns.ru)
